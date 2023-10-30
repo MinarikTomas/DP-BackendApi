@@ -1,4 +1,4 @@
-package sk.stuba.fei.uim.dp.attendanceapi.entities;
+package sk.stuba.fei.uim.dp.attendanceapi.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

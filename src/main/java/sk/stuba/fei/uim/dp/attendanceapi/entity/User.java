@@ -1,13 +1,16 @@
-package sk.stuba.fei.uim.dp.attendanceapi.entities;
+package sk.stuba.fei.uim.dp.attendanceapi.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.proxy.HibernateProxy;
+
 
 import java.time.Instant;
 import java.util.*;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -42,4 +45,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "activity_id"))
     private List<Activity> attendedActivities = new ArrayList<>();
 
+    public User(String fullName, String email, String password){
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+    }
 }
