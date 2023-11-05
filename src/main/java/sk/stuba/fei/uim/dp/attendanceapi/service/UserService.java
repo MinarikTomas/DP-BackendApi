@@ -1,14 +1,16 @@
 package sk.stuba.fei.uim.dp.attendanceapi.service;
 
-import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import sk.stuba.fei.uim.dp.attendanceapi.dto.SignupDto;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.UserAlreadyExistsException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.UserDoesNotExist;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.UserRepository;
 
 @Service
@@ -18,7 +20,7 @@ public class UserService implements IUserService{
     private UserRepository userRepository;
 
     @Override
-    public void create(SignupDto signupDto) {
+    public void create(SignupDto signupDto) throws UserAlreadyExistsException{
         if(emailExists(signupDto.getEmail())){
             throw new UserAlreadyExistsException();
         }
@@ -28,6 +30,39 @@ public class UserService implements IUserService{
                 signupDto.getPassword()
         );
         this.userRepository.save(user);
+    }
+
+    @Override
+    public User getById(Integer id) {
+        Optional<User> user= this.userRepository.findById(id);
+        if(user.isPresent()){
+            return user.get();
+        }throw new UserDoesNotExist();
+    }
+
+    @Override
+    public User getByEmail(String email) {
+        User user = this.userRepository.findByEmail(email);
+        if(user == null){
+            throw new UserDoesNotExist();
+        }
+        return user;
+    }
+
+    @Override
+    public List<Activity> getAttendedActivities(Integer id) {
+        return this.getById(id).getAttendedActivities();
+    }
+
+    @Override
+    public List<Activity> getUserCreatedActivites(Integer id) {
+        return this.getById(id).getMyActivities();
+    }
+
+    @Override
+    public void deleteUser(Integer id) {
+        User user = this.getById(id);
+        this.userRepository.delete(user);
     }
 
     private boolean emailExists(String email){
