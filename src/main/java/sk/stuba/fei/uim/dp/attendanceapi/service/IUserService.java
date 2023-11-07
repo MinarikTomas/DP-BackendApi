@@ -13,5 +13,4 @@ public interface IUserService {
     List<Activity> getAttendedActivities(Integer id);
     List<Activity> getUserCreatedActivities(Integer id);
     void deleteUser(Integer id);
-    boolean userExists(Integer id);
 }

@@ -65,11 +65,6 @@ public class UserService implements IUserService{
         this.userRepository.delete(user);
     }
 
-    @Override
-    public boolean userExists(Integer id) {
-        return this.userRepository.findById(id).isPresent();
-    }
-
     private boolean emailExists(String email){
         return userRepository.findByEmail(email) != null;
     }
