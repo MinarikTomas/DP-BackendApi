@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.UserDoesNotExist;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.UserNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.request.EmailRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.UserResponse;
@@ -55,7 +55,7 @@ public class UserController {
     )
     @GetMapping(value = "/{id}/createdactivities")
     public List<ActivityResponse> getUserCreatedActivities(@PathVariable("id") Integer id){
-        return this.userService.getUserCreatedActivites(id).stream().map(ActivityResponse::new).collect(Collectors.toList());
+        return this.userService.getUserCreatedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList());
     }
 
     @Operation(
@@ -68,8 +68,8 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserDoesNotExist.class)
-    public String handleUserDoesNotExist(UserDoesNotExist ex){
+    @ExceptionHandler(UserNotFound.class)
+    public String handleUserNotFound(UserNotFound ex){
         return ex.getMESSAGE();
     }
 }

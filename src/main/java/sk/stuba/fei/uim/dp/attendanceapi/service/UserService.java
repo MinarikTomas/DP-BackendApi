@@ -10,7 +10,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.dto.SignupDto;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.UserAlreadyExistsException;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.UserDoesNotExist;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.UserNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.UserRepository;
 
 @Service
@@ -37,14 +37,14 @@ public class UserService implements IUserService{
         Optional<User> user= this.userRepository.findById(id);
         if(user.isPresent()){
             return user.get();
-        }throw new UserDoesNotExist();
+        }throw new UserNotFound();
     }
 
     @Override
     public User getByEmail(String email) {
         User user = this.userRepository.findByEmail(email);
         if(user == null){
-            throw new UserDoesNotExist();
+            throw new UserNotFound();
         }
         return user;
     }
@@ -55,7 +55,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public List<Activity> getUserCreatedActivites(Integer id) {
+    public List<Activity> getUserCreatedActivities(Integer id) {
         return this.getById(id).getMyActivities();
     }
 
@@ -63,6 +63,11 @@ public class UserService implements IUserService{
     public void deleteUser(Integer id) {
         User user = this.getById(id);
         this.userRepository.delete(user);
+    }
+
+    @Override
+    public boolean userExists(Integer id) {
+        return this.userRepository.findById(id).isPresent();
     }
 
     private boolean emailExists(String email){

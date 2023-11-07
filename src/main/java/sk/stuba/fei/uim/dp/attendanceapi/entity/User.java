@@ -8,6 +8,7 @@ import lombok.Setter;
 
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @NoArgsConstructor
@@ -31,7 +32,7 @@ public class User {
     private String password;
 
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "createdBy")
     private List<Activity> myActivities = new ArrayList<>();

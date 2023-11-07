@@ -9,9 +9,9 @@ import java.util.List;
 public interface IUserService {
     void create(SignupDto signupDto);
     User getById(Integer id);
-
     User getByEmail(String email);
     List<Activity> getAttendedActivities(Integer id);
-    List<Activity> getUserCreatedActivites(Integer id);
+    List<Activity> getUserCreatedActivities(Integer id);
     void deleteUser(Integer id);
+    boolean userExists(Integer id);
 }

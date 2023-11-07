@@ -4,16 +4,17 @@ import lombok.Data;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 public class ActivityResponse {
     private Integer id;
     private String name;
     private String location;
-    private Instant time;
+    private LocalDateTime time;
     private Integer createdBy;
-    private Instant startTime;
-    private Instant endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     public ActivityResponse(Activity activity){
         this.id = activity.getId();

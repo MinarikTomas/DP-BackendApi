@@ -2,14 +2,17 @@ package sk.stuba.fei.uim.dp.attendanceapi.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
@@ -27,7 +30,7 @@ public class Activity {
     private String location;
 
     @Column(name = "time", nullable = false)
-    private Instant time;
+    private LocalDateTime time;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -35,18 +38,26 @@ public class Activity {
     private User createdBy;
 
     @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     @Column(name = "start_time")
-    private Instant startTime;
+    private LocalDateTime startTime;
 
     @Column(name = "end_time")
-    private Instant endTime;
+    private LocalDateTime endTime;
 
     @Column(name = "group_id")
     private Integer groupId;
 
     @ManyToMany(mappedBy = "attendedActivities")
     private List<User> participants = new ArrayList<>();
+
+    public Activity(User user, String name, String location, LocalDateTime time){
+        this.createdBy = user;
+        this.name = name;
+        this.location = location;
+        this.time = time;
+
+    }
 
 }
