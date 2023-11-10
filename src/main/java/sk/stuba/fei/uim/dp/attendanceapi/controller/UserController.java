@@ -66,10 +66,4 @@ public class UserController {
     public void deleteUser(@PathVariable("id") Integer id){
         this.userService.deleteUser(id);
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserNotFound.class)
-    public String handleUserNotFound(UserNotFound ex){
-        return ex.getMESSAGE();
-    }
 }

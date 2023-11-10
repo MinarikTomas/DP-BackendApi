@@ -49,16 +49,4 @@ public class CardController {
     public CardResponse getBySerialNumber(@RequestBody SerialNumberRequest request){
         return new CardResponse(this.cardService.getBySerialNumber(request.getSerialNumber()));
     }
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({
-            CardNotFound.class,
-            CardAlreadyExists.class
-    })
-    public String handleCardExceptions(RuntimeException ex){return ex.getMessage();}
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserNotFound.class)
-    public String handleUserNotFound(UserNotFound ex){
-        return ex.getMESSAGE();
-    }
-
 }

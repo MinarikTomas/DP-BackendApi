@@ -22,7 +22,7 @@ public class UserService implements IUserService{
     @Override
     public void create(SignupDto signupDto) throws UserAlreadyExistsException{
         if(emailExists(signupDto.getEmail())){
-            throw new UserAlreadyExistsException();
+            throw new UserAlreadyExistsException("User with this email already exists.");
         }
         User user = new User(
                 signupDto.getName(),
@@ -37,14 +37,14 @@ public class UserService implements IUserService{
         Optional<User> user= this.userRepository.findById(id);
         if(user.isPresent()){
             return user.get();
-        }throw new UserNotFound();
+        }throw new UserNotFound("User not found.");
     }
 
     @Override
     public User getByEmail(String email) {
         User user = this.userRepository.findByEmail(email);
         if(user == null){
-            throw new UserNotFound();
+            throw new UserNotFound("User not found.");
         }
         return user;
     }

@@ -25,23 +25,4 @@ public class AuthController {
         this.userService.create(signupDto);
         return new ResponseEntity<>("Successfully signed-up", HttpStatus.CREATED);
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public String handleUserAlreadyExistsException(UserAlreadyExistsException ex){
-        return ex.getMESSAGE();
-    }
 }

@@ -60,19 +60,4 @@ public class ActivityController {
     public void endActivity(@PathVariable("id")Integer id){
         this.activityService.endActivity(id);
     }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserNotFound.class)
-    public String handleUserNotFound(UserNotFound ex){
-        return ex.getMESSAGE();
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({
-            ActivityAlreadyEnded.class,
-            ActivityNotStarted.class,
-            ActivityNotFound.class,
-            ActivityAlreadyStarted.class
-    })
-    public String handleActivityExceptions(RuntimeException ex){return ex.getMessage();}
 }
