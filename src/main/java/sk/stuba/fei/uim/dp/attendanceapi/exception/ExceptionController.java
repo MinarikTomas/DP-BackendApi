@@ -6,11 +6,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyEnded;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyStarted;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStarted;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFound;
 
 import java.util.HashMap;
 import java.util.Map;

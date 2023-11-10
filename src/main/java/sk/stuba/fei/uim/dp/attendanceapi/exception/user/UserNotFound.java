@@ -1,4 +1,4 @@
-package sk.stuba.fei.uim.dp.attendanceapi.exception;
+package sk.stuba.fei.uim.dp.attendanceapi.exception.user;
 
 import lombok.Getter;
 

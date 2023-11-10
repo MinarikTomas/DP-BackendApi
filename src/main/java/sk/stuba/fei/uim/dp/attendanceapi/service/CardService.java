@@ -3,8 +3,8 @@ package sk.stuba.fei.uim.dp.attendanceapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.CardAlreadyExists;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.CardNotFound;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.CardRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
 
