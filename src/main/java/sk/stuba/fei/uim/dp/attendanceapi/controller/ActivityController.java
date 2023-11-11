@@ -55,4 +55,13 @@ public class ActivityController {
     public void endActivity(@PathVariable("id")Integer id){
         this.activityService.endActivity(id);
     }
+
+    @Operation(
+            description = "Deletes the activity with the given ID",
+            summary = "Delete activity"
+    )
+    @DeleteMapping("/{id}")
+    public void deleteActivity(@PathVariable("id")Integer id){
+        this.activityService.deleteActivity(id);
+    }
 }

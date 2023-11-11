@@ -46,4 +46,13 @@ public class CardController {
     public CardResponse getBySerialNumber(@RequestBody SerialNumberRequest request){
         return new CardResponse(this.cardService.getBySerialNumber(request.getSerialNumber()));
     }
+
+    @Operation(
+            description = "Deletes the card with the given ID",
+            summary = "Delete card"
+    )
+    @DeleteMapping("/{id}")
+    public void deleteCard(@PathVariable("id")Integer id){
+        this.cardService.deleteCard(id);
+    }
 }

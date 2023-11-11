@@ -7,4 +7,5 @@ public interface ICardService {
     void createCard(CardRequest request);
     Card getById(Integer id);
     Card getBySerialNumber(String serialNumber);
+    void deleteCard(Integer id);
 }

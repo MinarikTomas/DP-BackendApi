@@ -3,18 +3,15 @@ package sk.stuba.fei.uim.dp.attendanceapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
-import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyEnded;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyStarted;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStarted;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
-import sk.stuba.fei.uim.dp.attendanceapi.response.UserResponse;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -67,6 +64,12 @@ public class ActivityService implements IActivityService{
         }
         activity.setEndTime(LocalDateTime.now());
         this.activityRepository.save(activity);
+    }
+
+    @Override
+    public void deleteActivity(Integer id) {
+        Activity activity = this.getById(id);
+        this.activityRepository.delete(activity);
     }
 
 }

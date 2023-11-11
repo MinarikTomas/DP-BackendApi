@@ -49,6 +49,12 @@ public class CardService implements ICardService{
         return card;
     }
 
+    @Override
+    public void deleteCard(Integer id) {
+        Card card = this.getById(id);
+        this.cardRepository.delete(card);
+    }
+
     private boolean serialNumberExists(String serialNumber){
         return this.cardRepository.findBySerialNumber(serialNumber) != null;
     }
