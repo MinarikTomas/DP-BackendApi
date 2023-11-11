@@ -13,7 +13,8 @@ import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStarted;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFound;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.user.WrongPasswordException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,20 +30,22 @@ public class ExceptionController {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        // TODO
         return new ResponseEntity<>("test", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({
-            UserNotFound.class,
+            UserNotFoundException.class,
             ActivityNotFound.class,
             CardNotFound.class
     })
-    public ResponseEntity<String> handleNotFound(UserNotFound ex){
+    public ResponseEntity<String> handleNotFound(UserNotFoundException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({
-            UserAlreadyExistsException.class
+            UserAlreadyExistsException.class,
+            WrongPasswordException.class
     })
     public ResponseEntity<String> handleUserExceptions(RuntimeException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
