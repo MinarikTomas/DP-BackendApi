@@ -42,7 +42,7 @@ public class ActivityController {
             description = "Set current time as activity start time.",
             summary = "Start activity."
     )
-    @PutMapping("/{id}/start")
+    @PostMapping("/{id}/start")
     public void startActivity(@PathVariable("id")Integer id){
         this.activityService.startActivity(id);
     }
@@ -51,7 +51,7 @@ public class ActivityController {
             description = "Set current time as activity end time.",
             summary = "End activity."
     )
-    @PutMapping("/{id}/end")
+    @PostMapping("/{id}/end")
     public void endActivity(@PathVariable("id")Integer id){
         this.activityService.endActivity(id);
     }
