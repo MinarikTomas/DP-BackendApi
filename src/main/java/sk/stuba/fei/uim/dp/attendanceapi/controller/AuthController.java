@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.service.UserService;
 
 import java.util.HashMap;
@@ -37,11 +37,5 @@ public class AuthController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public String handleUserAlreadyExistsException(UserAlreadyExistsException ex){
-        return ex.getMESSAGE();
     }
 }
