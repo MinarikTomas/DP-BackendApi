@@ -40,23 +40,23 @@ public class UserController {
         return new UserResponse(this.userService.getByEmail(request.getEmail()));
     }
 
-    @Operation(
-            description = "Returns all activities that the user with given ID attended",
-            summary = "Get all user attended activities"
-    )
-    @GetMapping(value = "/{id}/attendedactivites")
-    public List<ActivityResponse> getUserAttendedActivities(@PathVariable("id") Integer id){
-        return this.userService.getAttendedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList());
-    }
-
-    @Operation(
-            description = "Returns all activities that the user with the given ID created",
-            summary = "Get all user created activities"
-    )
-    @GetMapping(value = "/{id}/createdactivities")
-    public List<ActivityResponse> getUserCreatedActivities(@PathVariable("id") Integer id){
-        return this.userService.getUserCreatedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList());
-    }
+//    @Operation(
+//            description = "Returns all activities that the user with given ID attended",
+//            summary = "Get all user attended activities"
+//    )
+//    @GetMapping(value = "/{id}/attendedactivites")
+//    public List<ActivityResponse> getUserAttendedActivities(@PathVariable("id") Integer id){
+//        return this.userService.getAttendedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList());
+//    }
+//
+//    @Operation(
+//            description = "Returns all activities that the user with the given ID created",
+//            summary = "Get all user created activities"
+//    )
+//    @GetMapping(value = "/{id}/createdactivities")
+//    public List<ActivityResponse> getUserCreatedActivities(@PathVariable("id") Integer id){
+//        return this.userService.getUserCreatedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList());
+//    }
 
     @Operation(
             description = "Deletes the user with the given ID",

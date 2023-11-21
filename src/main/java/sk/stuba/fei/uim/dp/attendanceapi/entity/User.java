@@ -40,12 +40,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Card> cards = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(name = "participant",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "activity_id"))
-    private List<Activity> attendedActivities = new ArrayList<>();
-
     public User(String fullName, String email, String password){
         this.fullName = fullName;
         this.email = email;

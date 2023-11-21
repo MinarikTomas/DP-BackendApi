@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-import sk.stuba.fei.uim.dp.attendanceapi.dto.SignupDto;
+import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.UserAlreadyExistsException;
@@ -20,7 +20,7 @@ public class UserService implements IUserService{
     private UserRepository userRepository;
 
     @Override
-    public void create(SignupDto signupDto) throws UserAlreadyExistsException{
+    public void create(SignupRequest signupDto) throws UserAlreadyExistsException{
         if(emailExists(signupDto.getEmail())){
             throw new UserAlreadyExistsException();
         }
@@ -49,10 +49,10 @@ public class UserService implements IUserService{
         return user;
     }
 
-    @Override
-    public List<Activity> getAttendedActivities(Integer id) {
-        return this.getById(id).getAttendedActivities();
-    }
+//    @Override
+//    public List<Activity> getAttendedActivities(Integer id) {
+//        return this.getById(id).getAttendedActivities();
+//    }
 
     @Override
     public List<Activity> getUserCreatedActivities(Integer id) {

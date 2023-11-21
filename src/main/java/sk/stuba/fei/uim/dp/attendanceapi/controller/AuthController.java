@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import sk.stuba.fei.uim.dp.attendanceapi.dto.SignupDto;
+import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.service.UserService;
 
@@ -21,7 +21,7 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @PostMapping("/signup")
-    public ResponseEntity<String> signupUser(@Valid @RequestBody SignupDto signupDto){
+    public ResponseEntity<String> signupUser(@Valid @RequestBody SignupRequest signupDto){
         this.userService.create(signupDto);
         return new ResponseEntity<>("Successfully signed-up", HttpStatus.CREATED);
     }
