@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
+import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
@@ -18,6 +20,9 @@ public class UserService implements IUserService{
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    ActivityRepository activityRepository;
 
     @Override
     public void create(SignupRequest signupDto) throws UserAlreadyExistsException {
@@ -49,14 +54,18 @@ public class UserService implements IUserService{
         return user;
     }
 
-//    @Override
-//    public List<Activity> getAttendedActivities(Integer id) {
-//        return this.getById(id).getAttendedActivities();
-//    }
-
+    @Override
+    public List<Activity> getAttendedActivities(Integer id) {
+        return this.activityRepository.getAllUserAttendedActivities(id);
+    }
     @Override
     public List<Activity> getUserCreatedActivities(Integer id) {
         return this.getById(id).getMyActivities();
+    }
+
+    @Override
+    public List<Activity> getAllActivities(Integer id){
+        return Stream.concat(this.getUserCreatedActivities(id).stream(), this.getAttendedActivities(id).stream()).toList();
     }
 
     @Override

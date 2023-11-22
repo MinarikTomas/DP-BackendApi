@@ -3,12 +3,16 @@ package sk.stuba.fei.uim.dp.attendanceapi.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.request.EmailRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.UserResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,23 +42,28 @@ public class UserController {
         return new UserResponse(this.userService.getByEmail(request.getEmail()));
     }
 
-//    @Operation(
-//            description = "Returns all activities that the user with given ID attended",
-//            summary = "Get all user attended activities"
-//    )
-//    @GetMapping(value = "/{id}/attendedactivites")
-//    public List<ActivityResponse> getUserAttendedActivities(@PathVariable("id") Integer id){
-//        return this.userService.getAttendedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList());
-//    }
-//
-//    @Operation(
-//            description = "Returns all activities that the user with the given ID created",
-//            summary = "Get all user created activities"
-//    )
-//    @GetMapping(value = "/{id}/createdactivities")
-//    public List<ActivityResponse> getUserCreatedActivities(@PathVariable("id") Integer id){
-//        return this.userService.getUserCreatedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList());
-//    }
+    @GetMapping("/{id}/activities")
+    public ResponseEntity<List<ActivityResponse>> getActivities(@PathVariable("id")Integer id, @RequestParam(required = false) String type){
+        if(type == null){
+            return new ResponseEntity<>(
+                    this.userService.getAllActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList()),
+                    HttpStatus.OK
+            );
+        }
+        if(type.equals("created")){
+            return new ResponseEntity<>(
+                    this.userService.getUserCreatedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList()),
+                    HttpStatus.OK
+            );
+        }
+        if(type.equals("attended")){
+            return new ResponseEntity<>(
+                    this.userService.getAttendedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList()),
+                    HttpStatus.OK
+            );
+        }
+        return ResponseEntity.badRequest().build();
+    }
 
     @Operation(
             description = "Deletes the user with the given ID",

@@ -10,7 +10,8 @@ public interface IUserService {
     void create(SignupRequest signupDto);
     User getById(Integer id);
     User getByEmail(String email);
-//    List<Activity> getAttendedActivities(Integer id);
+    List<Activity> getAttendedActivities(Integer id);
     List<Activity> getUserCreatedActivities(Integer id);
+    List<Activity> getAllActivities(Integer id);
     void deleteUser(Integer id);
 }
