@@ -1,40 +1,79 @@
 package sk.stuba.fei.uim.dp.attendanceapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
+import sk.stuba.fei.uim.dp.attendanceapi.repository.RoleRepository;
+import sk.stuba.fei.uim.dp.attendanceapi.request.LoginRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.UserRepository;
+import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
+import sk.stuba.fei.uim.dp.attendanceapi.security.JWTGenerator;
 
 @Service
 public class UserService implements IUserService{
 
-    @Autowired
+    private AuthenticationManager authenticationManager;
+    private RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
-
+    private ActivityRepository activityRepository;
+    private JWTGenerator jwtGenerator;
     @Autowired
-    ActivityRepository activityRepository;
+    public UserService(AuthenticationManager authenticationManager,
+                       RoleRepository roleRepository,
+                       PasswordEncoder passwordEncoder,
+                       UserRepository userRepository,
+                       ActivityRepository activityRepository,
+                       JWTGenerator jwtGenerator) {
+        this.authenticationManager = authenticationManager;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.activityRepository = activityRepository;
+        this.jwtGenerator = jwtGenerator;
+    }
 
     @Override
-    public void create(SignupRequest signupDto) throws UserAlreadyExistsException {
-        if(emailExists(signupDto.getEmail())){
+    public void create(SignupRequest signupRequest) throws UserAlreadyExistsException {
+        if(this.userRepository.existsByEmail(signupRequest.getEmail())){
             throw new UserAlreadyExistsException("User with this email already exists.");
         }
         User user = new User(
-                signupDto.getName(),
-                signupDto.getEmail(),
-                signupDto.getPassword()
+                signupRequest.getName(),
+                signupRequest.getEmail(),
+                passwordEncoder.encode(signupRequest.getPassword())
         );
+        Role role = this.roleRepository.findByName("USER");
+        user.setRoles(Collections.singletonList(role));
+
         this.userRepository.save(user);
+    }
+
+    @Override
+    public AuthResponse login(LoginRequest loginRequest) {
+        Authentication authentication = this.authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+                        loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtGenerator.generateToken(authentication);
+        return new AuthResponse(token);
     }
 
     @Override
@@ -72,9 +111,5 @@ public class UserService implements IUserService{
     public void deleteUser(Integer id) {
         User user = this.getById(id);
         this.userRepository.delete(user);
-    }
-
-    private boolean emailExists(String email){
-        return userRepository.findByEmail(email) != null;
     }
 }

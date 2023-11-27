@@ -1,13 +1,13 @@
 package sk.stuba.fei.uim.dp.attendanceapi.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-import java.time.Instant;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -39,6 +39,12 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Card> cards = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> roles = new ArrayList<>();
 
     public User(String fullName, String email, String password){
         this.fullName = fullName;
