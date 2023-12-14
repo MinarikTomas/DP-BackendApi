@@ -51,7 +51,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public void create(SignupRequest signupRequest) throws UserAlreadyExistsException {
+    public void create(SignupRequest signupRequest) {
         if(this.userRepository.existsByEmail(signupRequest.getEmail())){
             throw new UserAlreadyExistsException("User with this email already exists.");
         }
@@ -73,7 +73,8 @@ public class UserService implements IUserService{
                         loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = jwtGenerator.generateToken(authentication);
-        return new AuthResponse(token);
+        Integer uid = this.userRepository.findByEmail(loginRequest.getEmail()).getId();
+        return new AuthResponse(uid, token);
     }
 
     @Override

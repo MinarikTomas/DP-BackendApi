@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authEntryPoint))
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests( auth -> {
-                    auth.requestMatchers("/auth/signup", "/auth/login").permitAll();
+                    auth.requestMatchers("/auth/signup", "/auth/login", "/").permitAll();
                     auth.anyRequest().authenticated();
                 });
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
