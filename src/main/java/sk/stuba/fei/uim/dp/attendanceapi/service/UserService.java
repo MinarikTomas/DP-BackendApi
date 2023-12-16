@@ -72,9 +72,9 @@ public class UserService implements IUserService{
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
                         loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtGenerator.generateToken(authentication);
-        Integer uid = this.userRepository.findByEmail(loginRequest.getEmail()).getId();
-        return new AuthResponse(uid, token);
+        User user = this.userRepository.findByEmail(loginRequest.getEmail());
+        String token = jwtGenerator.generateToken(authentication, user);
+        return new AuthResponse(token);
     }
 
     @Override
