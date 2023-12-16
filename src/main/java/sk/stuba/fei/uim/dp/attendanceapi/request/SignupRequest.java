@@ -11,4 +11,5 @@ public class SignupRequest {
     private String email;
     @NotBlank(message = "Password is mandatory")
     private String password;
+    private CardRequest card;
 }

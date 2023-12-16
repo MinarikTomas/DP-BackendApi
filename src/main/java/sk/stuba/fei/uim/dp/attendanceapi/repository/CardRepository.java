@@ -5,4 +5,5 @@ import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
 
 public interface CardRepository extends JpaRepository<Card, Integer> {
     Card findBySerialNumber(String serialNumber);
+
 }

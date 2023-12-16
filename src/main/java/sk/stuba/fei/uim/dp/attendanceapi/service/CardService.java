@@ -20,12 +20,12 @@ public class CardService implements ICardService{
     private UserService userService;
 
     @Override
-    public void createCard(CardRequest request) {
+    public void createCard(CardRequest request, Integer uid) {
         if(this.serialNumberExists(request.getSerialNumber())){
             throw new CardAlreadyExists("Card with this serial number already exists.");
         }
         Card card = new Card(
-                userService.getById(request.getUid()),
+                userService.getById(uid),
                 request.getName(),
                 request.getSerialNumber()
         );

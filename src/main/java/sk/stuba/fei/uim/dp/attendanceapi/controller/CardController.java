@@ -19,15 +19,15 @@ public class CardController {
     @Autowired
     private CardService cardService;
 
-    @Operation(
-            description = "Create a new card.",
-            summary = "Create card."
-    )
-    @PostMapping
-    public ResponseEntity<String> createCard(@RequestBody CardRequest request){
-        this.cardService.createCard(request);
-        return new ResponseEntity<>("Card created", HttpStatus.CREATED);
-    }
+//    @Operation(
+//            description = "Create a new card.",
+//            summary = "Create card."
+//    )
+//    @PostMapping
+//    public ResponseEntity<String> createCard(@RequestBody CardRequest request){
+//        this.cardService.createCard(request);
+//        return new ResponseEntity<>("Card created", HttpStatus.CREATED);
+//    }
 
     @Operation(
             description = "Returns the card with given ID.",

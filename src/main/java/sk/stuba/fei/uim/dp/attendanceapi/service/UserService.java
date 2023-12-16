@@ -51,7 +51,7 @@ public class UserService implements IUserService{
     }
 
     @Override
-    public void create(SignupRequest signupRequest) {
+    public Integer create(SignupRequest signupRequest) {
         if(this.userRepository.existsByEmail(signupRequest.getEmail())){
             throw new UserAlreadyExistsException("User with this email already exists.");
         }
@@ -62,8 +62,8 @@ public class UserService implements IUserService{
         );
         Role role = this.roleRepository.findByName("USER");
         user.setRoles(Collections.singletonList(role));
-
-        this.userRepository.save(user);
+        User savedUser = this.userRepository.save(user);
+        return savedUser.getId();
     }
 
     @Override

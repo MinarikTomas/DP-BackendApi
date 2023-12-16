@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import sk.stuba.fei.uim.dp.attendanceapi.request.LoginRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
+import sk.stuba.fei.uim.dp.attendanceapi.service.CardService;
 import sk.stuba.fei.uim.dp.attendanceapi.service.UserService;
 
 import java.util.HashMap;
@@ -22,9 +23,12 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private CardService cardService;
     @PostMapping("/signup")
     public ResponseEntity<String> signupUser(@Valid @RequestBody SignupRequest signupRequest){
-        this.userService.create(signupRequest);
+        Integer uid = this.userService.create(signupRequest);
+        this.cardService.createCard(signupRequest.getCard(), uid);
         return new ResponseEntity<>("Successfully signed-up", HttpStatus.CREATED);
     }
 
