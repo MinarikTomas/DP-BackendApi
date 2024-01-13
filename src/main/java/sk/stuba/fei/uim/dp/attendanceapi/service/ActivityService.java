@@ -22,7 +22,7 @@ public class ActivityService implements IActivityService{
     private ActivityRepository activityRepository;
     @Override
     public void createActivity(ActivityRequest request){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         LocalDateTime time = LocalDateTime.parse(request.getTime(), formatter);
         Activity activity = new Activity(
                 userService.getById(request.getUid()),
@@ -31,7 +31,22 @@ public class ActivityService implements IActivityService{
                 time
 
         );
-        this.activityRepository.save(activity);
+        Activity createdActivity = this.activityRepository.save(activity);
+
+        if(request.getWeeks() > 0){
+            for(int i = 0; i < request.getWeeks(); i++){
+                activity = new Activity(
+                        userService.getById(request.getUid()),
+                        request.getName(),
+                        request.getLocation(),
+                        time.plusWeeks(i+1)
+                );
+                activity.setGroupId(createdActivity.getId());
+                this.activityRepository.save(activity);
+            }
+            createdActivity.setGroupId(createdActivity.getId());
+            this.activityRepository.save(createdActivity);
+        }
     }
 
     @Override

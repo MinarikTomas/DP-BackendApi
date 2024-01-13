@@ -14,8 +14,8 @@ public class ActivityRequest {
     private String location;
     @Schema(
             type = "string",
-            pattern = "yyyy-MM-dd HH:mm",
-            example = "2023-05-17 10:00"
+            pattern = "dd.MM.yyyy HH:mm",
+            example = "17.05.2024 10:30"
     )
     private String time;
     private Integer weeks;
