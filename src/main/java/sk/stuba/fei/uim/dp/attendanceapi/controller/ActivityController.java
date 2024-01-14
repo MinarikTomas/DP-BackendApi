@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
-import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityResponse;
+import sk.stuba.fei.uim.dp.attendanceapi.request.ParticipantRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityWithParticipantsResponse;
+import sk.stuba.fei.uim.dp.attendanceapi.response.UserResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.service.ActivityService;
 
 
@@ -34,8 +37,21 @@ public class ActivityController {
             summary = "Get activity."
     )
     @GetMapping(value = "/{id}")
-    public ActivityResponse getActivity(@PathVariable("id") Integer id){
-        return new ActivityResponse(this.activityService.getById(id));
+    public ActivityWithParticipantsResponse getActivity(@PathVariable("id") Integer id){
+        return new ActivityWithParticipantsResponse(this.activityService.getById(id));
+    }
+
+    @Operation(
+            description = "Add participant to activity with the given id",
+            summary = "add participant"
+    )
+    @PostMapping("/{id}")
+    public UserResponse addParticipant(@PathVariable("id")Integer id, @RequestBody ParticipantRequest request){
+        User user= this.activityService.addParticipant(id, request);
+        if(user == null){
+            return null;
+        }
+        return new UserResponse(user);
     }
 
     @Operation(

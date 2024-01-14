@@ -3,12 +3,18 @@ package sk.stuba.fei.uim.dp.attendanceapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.Participant;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyEnded;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyStarted;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStarted;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
+import sk.stuba.fei.uim.dp.attendanceapi.repository.ParticipantRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.ParticipantRequest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +25,11 @@ public class ActivityService implements IActivityService{
     @Autowired
     private UserService userService;
     @Autowired
+    private CardService cardService;
+    @Autowired
     private ActivityRepository activityRepository;
+    @Autowired
+    private ParticipantRepository participantRepository;
     @Override
     public void createActivity(ActivityRequest request){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
@@ -85,6 +95,26 @@ public class ActivityService implements IActivityService{
     public void deleteActivity(Integer id) {
         Activity activity = this.getById(id);
         this.activityRepository.delete(activity);
+    }
+
+    @Override
+    public User addParticipant(Integer id, ParticipantRequest request) {
+        Activity activity = this.getById(id);
+        if(activity.getStartTime() == null){
+            throw new ActivityNotStarted("The activity has not started yet.");
+        }
+        if(activity.getEndTime() != null){
+            throw new ActivityAlreadyEnded("The activity already ended.");
+        }
+        Card card;
+        try{
+            card = this.cardService.getBySerialNumber(request.getSerialNumber());
+        }catch (CardNotFound e){
+            card = this.cardService.createCardWithoutUser(request.getSerialNumber());
+        }
+        Participant participant = new Participant(activity, card);
+        this.participantRepository.save(participant);
+        return card.getUser();
     }
 
 }

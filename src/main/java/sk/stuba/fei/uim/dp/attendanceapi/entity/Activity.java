@@ -51,8 +51,8 @@ public class Activity {
     @Column(name = "group_id")
     private Integer groupId;
 
-    @ManyToMany(mappedBy = "activities")
-    private List<Card> cards = new ArrayList<>();
+    @OneToMany(mappedBy = "activity")
+    private List<Participant> participants;
 
     public Activity(User user, String name, String location, LocalDateTime time){
         this.createdBy = user;

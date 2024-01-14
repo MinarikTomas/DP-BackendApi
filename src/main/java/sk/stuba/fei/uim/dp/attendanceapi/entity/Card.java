@@ -24,13 +24,12 @@ public class Card {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name")
     private String name;
 
     @Column(name = "serial_number", nullable = false)
@@ -42,11 +41,8 @@ public class Card {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @ManyToMany
-    @JoinTable(name = "participant",
-            joinColumns = @JoinColumn(name = "card_id"),
-            inverseJoinColumns = @JoinColumn(name = "activity_id"))
-    private List<Activity> activities = new ArrayList<>();
+    @OneToMany(mappedBy = "card")
+    private List<Participant> activities;
 
     public Card(User user, String name, String serialNumber){
         this.user = user;

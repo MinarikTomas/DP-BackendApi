@@ -58,4 +58,16 @@ public class CardService implements ICardService{
     private boolean serialNumberExists(String serialNumber){
         return this.cardRepository.findBySerialNumber(serialNumber) != null;
     }
+
+    public Card createCardWithoutUser(String serialNumber){
+        if(this.serialNumberExists(serialNumber)){
+            throw new CardAlreadyExists("Card with this serial number already exists.");
+        }
+        Card card = new Card(
+                null,
+                null,
+                serialNumber
+        );
+        return this.cardRepository.save(card);
+    }
 }
