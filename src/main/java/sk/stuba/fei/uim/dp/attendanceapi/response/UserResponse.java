@@ -11,7 +11,7 @@ public class UserResponse {
     private String email;
 
     public UserResponse(User user){
-        this.id = user.getId();
+        this.id = user.getId() == null ? -1 : user.getId();
         this.fullName = user.getFullName();
         this.email = user.getEmail();
     }

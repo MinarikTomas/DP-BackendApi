@@ -2,6 +2,7 @@ package sk.stuba.fei.uim.dp.attendanceapi.response;
 
 import lombok.Data;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,7 +27,7 @@ public class ActivityWithParticipantsResponse {
         this.time = formatter.format(activity.getTime());
         this.participants = activity.getParticipants().stream().map(participant -> {
             if(participant.getCard().getUser() == null){
-                return null;
+                return new UserResponse(new User("Unknown", "", ""));
             }
             return new UserResponse(participant.getCard().getUser());
         }).collect(Collectors.toList());

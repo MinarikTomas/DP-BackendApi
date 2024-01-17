@@ -99,6 +99,7 @@ public class ActivityService implements IActivityService{
 
     @Override
     public User addParticipant(Integer id, ParticipantRequest request) {
+        System.out.println("adding participant");
         Activity activity = this.getById(id);
         if(activity.getStartTime() == null){
             throw new ActivityNotStarted("The activity has not started yet.");
@@ -106,15 +107,18 @@ public class ActivityService implements IActivityService{
         if(activity.getEndTime() != null){
             throw new ActivityAlreadyEnded("The activity already ended.");
         }
+        User user;
         Card card;
         try{
             card = this.cardService.getBySerialNumber(request.getSerialNumber());
+            user = card.getUser();
         }catch (CardNotFound e){
             card = this.cardService.createCardWithoutUser(request.getSerialNumber());
+            user = new User("Unknown", "", "");
         }
         Participant participant = new Participant(activity, card);
         this.participantRepository.save(participant);
-        return card.getUser();
+        return user;
     }
 
 }

@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ParticipantRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityWithParticipantsResponse;
@@ -47,18 +46,14 @@ public class ActivityController {
     )
     @PostMapping("/{id}")
     public UserResponse addParticipant(@PathVariable("id")Integer id, @RequestBody ParticipantRequest request){
-        User user= this.activityService.addParticipant(id, request);
-        if(user == null){
-            return null;
-        }
-        return new UserResponse(user);
+        return new UserResponse(this.activityService.addParticipant(id, request));
     }
 
     @Operation(
             description = "Set current time as activity start time.",
             summary = "Start activity."
     )
-    @PostMapping("/{id}/start")
+    @PutMapping("/{id}/start")
     public void startActivity(@PathVariable("id")Integer id){
         this.activityService.startActivity(id);
     }
@@ -67,7 +62,7 @@ public class ActivityController {
             description = "Set current time as activity end time.",
             summary = "End activity."
     )
-    @PostMapping("/{id}/end")
+    @PutMapping("/{id}/end")
     public void endActivity(@PathVariable("id")Integer id){
         this.activityService.endActivity(id);
     }
