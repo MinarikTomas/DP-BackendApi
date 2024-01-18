@@ -3,6 +3,7 @@ package sk.stuba.fei.uim.dp.attendanceapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.CardRepository;
@@ -16,16 +17,13 @@ public class CardService implements ICardService{
     @Autowired
     private CardRepository cardRepository;
 
-    @Autowired
-    private UserService userService;
-
     @Override
-    public void createCard(CardRequest request, Integer uid) {
+    public void createCard(CardRequest request, User user) {
         if(this.serialNumberExists(request.getSerialNumber())){
             throw new CardAlreadyExists("Card with this serial number already exists.");
         }
         Card card = new Card(
-                userService.getById(uid),
+                user,
                 request.getName(),
                 request.getSerialNumber()
         );
@@ -55,10 +53,6 @@ public class CardService implements ICardService{
         this.cardRepository.delete(card);
     }
 
-    private boolean serialNumberExists(String serialNumber){
-        return this.cardRepository.findBySerialNumber(serialNumber) != null;
-    }
-
     public Card createCardWithoutUser(String serialNumber){
         if(this.serialNumberExists(serialNumber)){
             throw new CardAlreadyExists("Card with this serial number already exists.");
@@ -69,5 +63,19 @@ public class CardService implements ICardService{
                 serialNumber
         );
         return this.cardRepository.save(card);
+    }
+
+    public boolean existsWithUser(String serialNumber){
+        Card card = this.cardRepository.findBySerialNumber(serialNumber);
+        return card != null && card.getUser() != null;
+    }
+
+    public void addUser(User user, Card card){
+        card.setUser(user);
+        this.cardRepository.save(card);
+    }
+
+    private boolean serialNumberExists(String serialNumber){
+        return this.cardRepository.findBySerialNumber(serialNumber) != null;
     }
 }

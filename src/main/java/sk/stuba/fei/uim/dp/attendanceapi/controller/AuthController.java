@@ -26,10 +26,9 @@ public class AuthController {
     @Autowired
     private CardService cardService;
     @PostMapping("/signup")
-    public ResponseEntity<String> signupUser(@Valid @RequestBody SignupRequest signupRequest){
-        Integer uid = this.userService.create(signupRequest);
-        this.cardService.createCard(signupRequest.getCard(), uid);
-        return new ResponseEntity<>("Successfully signed-up", HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void signupUser(@Valid @RequestBody SignupRequest signupRequest){
+        this.userService.create(signupRequest);
     }
 
     @PostMapping("/login")

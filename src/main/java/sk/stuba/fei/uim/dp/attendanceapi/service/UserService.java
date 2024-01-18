@@ -9,11 +9,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
@@ -35,25 +39,32 @@ public class UserService implements IUserService{
     private UserRepository userRepository;
     private ActivityRepository activityRepository;
     private JWTGenerator jwtGenerator;
+
+    private CardService cardService;
     @Autowired
     public UserService(AuthenticationManager authenticationManager,
                        RoleRepository roleRepository,
                        PasswordEncoder passwordEncoder,
                        UserRepository userRepository,
                        ActivityRepository activityRepository,
-                       JWTGenerator jwtGenerator) {
+                       JWTGenerator jwtGenerator,
+                       CardService cardService) {
         this.authenticationManager = authenticationManager;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.activityRepository = activityRepository;
         this.jwtGenerator = jwtGenerator;
+        this.cardService = cardService;
     }
 
     @Override
-    public Integer create(SignupRequest signupRequest) {
+    public void create(SignupRequest signupRequest) {
         if(this.userRepository.existsByEmail(signupRequest.getEmail())){
             throw new UserAlreadyExistsException("User with this email already exists.");
+        }
+        if(this.cardService.existsWithUser(signupRequest.getCard().getSerialNumber())){
+            throw new CardAlreadyExists("User with this card already exists.");
         }
         User user = new User(
                 signupRequest.getName(),
@@ -63,7 +74,13 @@ public class UserService implements IUserService{
         Role role = this.roleRepository.findByName("USER");
         user.setRoles(Collections.singletonList(role));
         User savedUser = this.userRepository.save(user);
-        return savedUser.getId();
+
+        try{
+            Card card = this.cardService.getBySerialNumber(signupRequest.getCard().getSerialNumber());
+            this.cardService.addUser(savedUser, card);
+        }catch(CardNotFound e){
+            this.cardService.createCard(signupRequest.getCard(), savedUser);
+        }
     }
 
     @Override
@@ -100,7 +117,9 @@ public class UserService implements IUserService{
     }
     @Override
     public List<Activity> getUserCreatedActivities(Integer id) {
-        return this.getById(id).getMyActivities();
+        List<Activity> activities = this.getById(id).getMyActivities();
+        Collections.sort(activities, Comparator.comparing(Activity::getTime));
+        return activities;
     }
 
     @Override

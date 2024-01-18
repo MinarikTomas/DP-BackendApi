@@ -9,7 +9,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
 import java.util.List;
 
 public interface IUserService {
-    Integer create(SignupRequest signupRequest);
+    void create(SignupRequest signupRequest);
     AuthResponse login(LoginRequest loginRequest);
     User getById(Integer id);
     User getByEmail(String email);
