@@ -6,13 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.request.EmailRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityResponse;
+import sk.stuba.fei.uim.dp.attendanceapi.response.CardResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.UserResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,6 +41,10 @@ public class UserController {
         return new UserResponse(this.userService.getByEmail(request.getEmail()));
     }
 
+    @Operation(
+            description = "Returns user's activities with optional query parameter created/attended",
+            summary = "Get user's activities"
+    )
     @GetMapping("/{id}/activities")
     public ResponseEntity<List<ActivityResponse>> getActivities(@PathVariable("id")Integer id, @RequestParam(required = false) String type){
         if(type == null){
@@ -59,6 +62,29 @@ public class UserController {
         if(type.equals("attended")){
             return new ResponseEntity<>(
                     this.userService.getAttendedActivities(id).stream().map(ActivityResponse::new).collect(Collectors.toList()),
+                    HttpStatus.OK
+            );
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/{id}/cards")
+    public ResponseEntity<List<CardResponse>> getCards(@PathVariable("id")Integer id, @RequestParam(required = false)String type){
+        if(type == null){
+            return new ResponseEntity<>(
+                    this.userService.getAllCards(id).stream().map(CardResponse::new).collect(Collectors.toList()),
+                    HttpStatus.OK
+            );
+        }
+        if(type.equals("active")){
+            return new ResponseEntity<>(
+                    this.userService.getActiveCards(id).stream().map(CardResponse::new).collect(Collectors.toList()),
+                    HttpStatus.OK
+            );
+        }
+        if(type.equals("inactive")){
+            return new ResponseEntity<>(
+                    this.userService.getInactiveCards(id).stream().map(CardResponse::new).collect(Collectors.toList()),
                     HttpStatus.OK
             );
         }

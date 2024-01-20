@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
@@ -125,6 +126,21 @@ public class UserService implements IUserService{
     @Override
     public List<Activity> getAllActivities(Integer id){
         return Stream.concat(this.getUserCreatedActivities(id).stream(), this.getAttendedActivities(id).stream()).toList();
+    }
+
+    @Override
+    public List<Card> getAllCards(Integer id) {
+        return this.getById(id).getCards();
+    }
+
+    @Override
+    public List<Card> getActiveCards(Integer id) {
+        return this.getById(id).getCards().stream().filter(Card::getActive).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Card> getInactiveCards(Integer id) {
+        return this.getById(id).getCards().stream().filter(card -> !card.getActive()).collect(Collectors.toList());
     }
 
     @Override

@@ -1,5 +1,6 @@
 package sk.stuba.fei.uim.dp.attendanceapi.service;
 
+import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
 import sk.stuba.fei.uim.dp.attendanceapi.request.LoginRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
@@ -16,5 +17,10 @@ public interface IUserService {
     List<Activity> getAttendedActivities(Integer id);
     List<Activity> getUserCreatedActivities(Integer id);
     List<Activity> getAllActivities(Integer id);
+
+    List<Card> getAllCards(Integer id);
+
+    List<Card> getActiveCards(Integer id);
+    List<Card> getInactiveCards(Integer id);
     void deleteUser(Integer id);
 }
