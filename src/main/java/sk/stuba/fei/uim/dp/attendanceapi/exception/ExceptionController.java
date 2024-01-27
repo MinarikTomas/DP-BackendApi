@@ -12,6 +12,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStarted;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardWithoutUser;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.WrongPasswordException;
@@ -35,11 +36,11 @@ public class ExceptionController {
     }
 
     @ExceptionHandler({
+            CardNotFound.class,
             UserNotFoundException.class,
             ActivityNotFound.class,
-            CardNotFound.class
     })
-    public ResponseEntity<String> handleNotFound(UserNotFoundException ex){
+    public ResponseEntity<String> handleNotFound(RuntimeException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
@@ -60,7 +61,8 @@ public class ExceptionController {
     }
 
     @ExceptionHandler({
-            CardAlreadyExists.class
+            CardAlreadyExists.class,
+            CardWithoutUser.class
     })
     public ResponseEntity<String> handleCardExceptions(RuntimeException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);

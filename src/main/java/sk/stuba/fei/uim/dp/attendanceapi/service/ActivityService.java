@@ -99,7 +99,6 @@ public class ActivityService implements IActivityService{
 
     @Override
     public User addParticipant(Integer id, ParticipantRequest request) {
-        System.out.println("adding participant");
         Activity activity = this.getById(id);
         if(activity.getStartTime() == null){
             throw new ActivityNotStarted("The activity has not started yet.");
@@ -111,8 +110,13 @@ public class ActivityService implements IActivityService{
         Card card;
         try{
             card = this.cardService.getBySerialNumber(request.getSerialNumber());
-            user = card.getUser();
+            if(card.getUser() == null){
+                user = new User("Unknown", "", "");
+            }else{
+                user = card.getUser();
+            }
         }catch (CardNotFound e){
+            System.out.println("catch block");
             card = this.cardService.createCardWithoutUser(request.getSerialNumber());
             user = new User("Unknown", "", "");
         }

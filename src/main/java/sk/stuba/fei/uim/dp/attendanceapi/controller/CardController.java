@@ -19,15 +19,6 @@ public class CardController {
     @Autowired
     private CardService cardService;
 
-//    @Operation(
-//            description = "Create a new card.",
-//            summary = "Create card."
-//    )
-//    @PostMapping
-//    public ResponseEntity<String> createCard(@RequestBody CardRequest request){
-//        this.cardService.createCard(request);
-//        return new ResponseEntity<>("Card created", HttpStatus.CREATED);
-//    }
 
     @Operation(
             description = "Returns the card with given ID.",
@@ -45,5 +36,11 @@ public class CardController {
     @GetMapping
     public CardResponse getBySerialNumber(@RequestBody SerialNumberRequest request){
         return new CardResponse(this.cardService.getBySerialNumber(request.getSerialNumber()));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deactivateCard(@PathVariable("id")Integer id){
+        this.cardService.deactivateCard(id);
+        return new ResponseEntity<>("Card successfully deactivated.", HttpStatus.OK);
     }
 }

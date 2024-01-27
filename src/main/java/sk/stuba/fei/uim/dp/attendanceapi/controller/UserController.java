@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.EmailRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.CardResponse;
@@ -89,6 +90,16 @@ public class UserController {
             );
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @Operation(
+            description = "Add card to user",
+            summary = "Add card to user"
+    )
+    @PostMapping("/{id}/cards")
+    public ResponseEntity<String> addCard(@PathVariable("id")Integer id, @RequestBody CardRequest request){
+        this.userService.addCard(request, id);
+        return new ResponseEntity<>("Card added", HttpStatus.CREATED);
     }
 
     @Operation(

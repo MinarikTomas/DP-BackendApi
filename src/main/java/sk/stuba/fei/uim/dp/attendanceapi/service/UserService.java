@@ -23,6 +23,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsExcepti
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.RoleRepository;
+import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.LoginRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
@@ -100,7 +101,7 @@ public class UserService implements IUserService{
         Optional<User> user= this.userRepository.findById(id);
         if(user.isPresent()){
             return user.get();
-        }throw new UserNotFoundException("USer not found.");
+        }throw new UserNotFoundException("User not found.");
     }
 
     @Override
@@ -141,6 +142,12 @@ public class UserService implements IUserService{
     @Override
     public List<Card> getInactiveCards(Integer id) {
         return this.getById(id).getCards().stream().filter(card -> !card.getActive()).collect(Collectors.toList());
+    }
+
+    @Override
+    public void addCard(CardRequest request, Integer id) {
+        User user = this.getById(id);
+        this.cardService.createCard(request, user);
     }
 
     @Override
