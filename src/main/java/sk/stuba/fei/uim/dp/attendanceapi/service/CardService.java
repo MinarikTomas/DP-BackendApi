@@ -9,6 +9,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardWithoutUser;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.CardRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.NameRequest;
 
 import java.util.Optional;
 
@@ -59,6 +60,13 @@ public class CardService implements ICardService{
             throw new CardNotFound("Card not found.");
         }
         return card;
+    }
+
+    @Override
+    public void update(NameRequest request, Integer id) {
+        Card card = this.getById(id);
+        card.setName(request.getName());
+        this.cardRepository.save(card);
     }
 
     @Override

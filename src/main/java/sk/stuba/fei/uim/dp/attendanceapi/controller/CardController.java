@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.NameRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SerialNumberRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.CardResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.service.CardService;
@@ -38,6 +38,19 @@ public class CardController {
         return new CardResponse(this.cardService.getBySerialNumber(request.getSerialNumber()));
     }
 
+    @Operation(
+            description = "Updates the name of the card with given id",
+            summary = "Update card"
+    )
+    @PutMapping("/{id}")
+    public void update(@PathVariable("id")Integer id, @RequestBody NameRequest request){
+        this.cardService.update(request, id);
+    }
+
+    @Operation(
+            description = "Deactivates the card with given id.",
+            summary = "Deactivate card"
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deactivateCard(@PathVariable("id")Integer id){
         this.cardService.deactivateCard(id);
