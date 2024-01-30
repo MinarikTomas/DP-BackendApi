@@ -63,10 +63,10 @@ public class CardService implements ICardService{
     }
 
     @Override
-    public void update(NameRequest request, Integer id) {
+    public Card update(NameRequest request, Integer id) {
         Card card = this.getById(id);
         card.setName(request.getName());
-        this.cardRepository.save(card);
+        return this.cardRepository.save(card);
     }
 
     @Override

@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.EditActivityRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ParticipantRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityWithParticipantsResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.UserResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.service.ActivityService;
@@ -47,6 +49,11 @@ public class ActivityController {
     @PostMapping("/{id}")
     public UserResponse addParticipant(@PathVariable("id")Integer id, @RequestBody ParticipantRequest request){
         return new UserResponse(this.activityService.addParticipant(id, request));
+    }
+
+    @PutMapping("/{id}")
+    public ActivityResponse update(@PathVariable("id")Integer id, @RequestBody EditActivityRequest request){
+        return new ActivityResponse(this.activityService.update(id, request));
     }
 
     @Operation(

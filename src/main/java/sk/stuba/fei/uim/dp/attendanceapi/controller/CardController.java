@@ -43,8 +43,8 @@ public class CardController {
             summary = "Update card"
     )
     @PutMapping("/{id}")
-    public void update(@PathVariable("id")Integer id, @RequestBody NameRequest request){
-        this.cardService.update(request, id);
+    public CardResponse update(@PathVariable("id")Integer id, @RequestBody NameRequest request){
+        return new CardResponse(this.cardService.update(request, id));
     }
 
     @Operation(

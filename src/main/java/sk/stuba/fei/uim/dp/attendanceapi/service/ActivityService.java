@@ -14,6 +14,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ParticipantRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.EditActivityRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ParticipantRequest;
 
 import java.time.LocalDateTime;
@@ -30,10 +31,11 @@ public class ActivityService implements IActivityService{
     private ActivityRepository activityRepository;
     @Autowired
     private ParticipantRepository participantRepository;
+
+    private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     @Override
     public void createActivity(ActivityRequest request){
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        LocalDateTime time = LocalDateTime.parse(request.getTime(), formatter);
+        LocalDateTime time = LocalDateTime.parse(request.getTime(), FORMATTER);
         Activity activity = new Activity(
                 userService.getById(request.getUid()),
                 request.getName(),
@@ -89,6 +91,32 @@ public class ActivityService implements IActivityService{
         }
         activity.setEndTime(LocalDateTime.now());
         this.activityRepository.save(activity);
+    }
+
+    @Override
+    public Activity update(Integer id, EditActivityRequest request) {
+        if(request.getEditAll()){
+            return null;
+        }else{
+            return this.activityRepository.save(
+                    updateAttributes(
+                            this.getById(id),
+                            request.getName(),
+                            request.getLocation(),
+                            LocalDateTime.parse(request.getTime(), FORMATTER))
+            );
+        }
+    }
+
+    private Activity updateAttributes(
+            Activity activity,
+            String name,
+            String location,
+            LocalDateTime time){
+        activity.setName(name);
+        activity.setLocation(location);
+        activity.setTime(time);
+        return activity;
     }
 
     @Override
