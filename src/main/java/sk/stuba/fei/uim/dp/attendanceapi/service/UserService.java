@@ -24,6 +24,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.RoleRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.ChangePasswordRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.LoginRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
@@ -148,6 +149,14 @@ public class UserService implements IUserService{
     public void addCard(CardRequest request, Integer id) {
         User user = this.getById(id);
         this.cardService.createCard(request, user);
+    }
+
+    @Override
+    public void changePassword(Integer id, ChangePasswordRequest request) {
+        User user = this.getById(id);
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        this.userRepository.save(user);
+
     }
 
     @Override

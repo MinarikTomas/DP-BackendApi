@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.ChangePasswordRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.EmailRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.CardResponse;
@@ -31,6 +32,15 @@ public class UserController {
     @GetMapping("/{id}")
     public UserResponse getUser(@PathVariable("id") Integer id){
         return new UserResponse(this.userService.getById(id));
+    }
+
+    @Operation(
+            description = "Updates password of the user with the given id",
+            summary = "Change password"
+    )
+    @PutMapping("/{id}")
+    public void changePassword(@PathVariable("id")Integer id, @RequestBody ChangePasswordRequest request){
+        this.userService.changePassword(id, request);
     }
 
     @Operation(
