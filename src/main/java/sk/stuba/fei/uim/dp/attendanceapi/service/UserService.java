@@ -1,6 +1,10 @@
 package sk.stuba.fei.uim.dp.attendanceapi.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -8,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -93,8 +98,9 @@ public class UserService implements IUserService{
                         loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = this.userRepository.findByEmail(loginRequest.getEmail());
-        String token = jwtGenerator.generateToken(authentication, user);
-        return new AuthResponse(token);
+        String token = jwtGenerator.generateToken(user);
+        String refreshToken = jwtGenerator.generateRefreshToken(authentication);
+        return new AuthResponse(token, refreshToken);
     }
 
     @Override
@@ -163,5 +169,22 @@ public class UserService implements IUserService{
     public void deleteUser(Integer id) {
         User user = this.getById(id);
         this.userRepository.delete(user);
+    }
+
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String refreshToken;
+        String email;
+        if(authHeader == null || !authHeader.startsWith("Bearer ")){
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        email = jwtGenerator.getEmailFromJWT(refreshToken);
+        if(email != null){
+            User user = this.getByEmail(email);
+            String accessToken = jwtGenerator.generateToken(user);
+            AuthResponse authResponse = new AuthResponse(accessToken, refreshToken);
+            new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+        }
     }
 }

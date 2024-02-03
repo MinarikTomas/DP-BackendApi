@@ -31,15 +31,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String token = getJWTFromRequest(request);
-        if(StringUtils.hasText(token) && tokenGenerator.validateToken(token)){
-
-            String username = tokenGenerator.getUserNameFromJWT(token);
-//
-//            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-//             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null,
-//                    userDetails.getAuthorities());
-//            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        if(StringUtils.hasText(token) && tokenGenerator.isTokenValid(token)){
+            String username = tokenGenerator.getEmailFromJWT(token);
 
             Collection<GrantedAuthority> authorities = tokenGenerator.getRolesFromJWT(token)
                     .stream()

@@ -4,16 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -22,8 +19,8 @@ public class JWTGenerator {
 
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-    public String generateToken(Authentication authentication, User user){
-        String email = authentication.getName();
+    public String generateToken(User user){
+        String email = user.getEmail();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
 
@@ -41,7 +38,20 @@ public class JWTGenerator {
         return token;
     }
 
-    public String getUserNameFromJWT(String token){
+    public String generateRefreshToken(Authentication authentication){
+        Date currentDate = new Date();
+        Date expireDate = new Date(currentDate.getTime() + SecurityConstants.REFRESH_EXPIRATION);
+
+        return Jwts.builder()
+                .setClaims(new HashMap<>())
+                .setSubject(authentication.getName())
+                .setIssuedAt(new Date())
+                .setExpiration(expireDate)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public String getEmailFromJWT(String token){
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -56,11 +66,15 @@ public class JWTGenerator {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        String rolesString = claims.get("roles").toString();
-        return Arrays.stream(rolesString.split(",")).toList();
+        Object rolesObject = claims.get("roles");
+        if(rolesObject != null){
+            String rolesString = rolesObject.toString();
+            return Arrays.stream(rolesString.split(",")).toList();
+        }
+        return new ArrayList<>();
     }
 
-    public boolean validateToken(String token){
+    public boolean isTokenValid(String token){
         try{
             Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -70,7 +84,8 @@ public class JWTGenerator {
             return true;
         }catch (Exception ex){
             System.out.println("Token is invalid");
-            throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect");
+            System.out.println(ex.getMessage());
+            return false;
         }
     }
 }

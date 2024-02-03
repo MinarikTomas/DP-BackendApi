@@ -1,5 +1,7 @@
 package sk.stuba.fei.uim.dp.attendanceapi.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.service.UserService;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +35,14 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> loginUser(@Valid @RequestBody LoginRequest loginRequest){
         return new ResponseEntity<>(this.userService.login(loginRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/refresh")
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        this.userService.refreshToken(request, response);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
