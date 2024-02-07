@@ -4,7 +4,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
@@ -31,6 +30,7 @@ public class JWTGenerator {
                 .claim("id", user.getId())
                 .claim("fullName", user.getFullName())
                 .claim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+                .claim("hasCard", !user.getCards().isEmpty())
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
         System.out.println("New token : ");
@@ -38,13 +38,13 @@ public class JWTGenerator {
         return token;
     }
 
-    public String generateRefreshToken(Authentication authentication){
+    public String generateRefreshToken(User user){
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + SecurityConstants.REFRESH_EXPIRATION);
 
         return Jwts.builder()
                 .setClaims(new HashMap<>())
-                .setSubject(authentication.getName())
+                .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(key, SignatureAlgorithm.HS512)

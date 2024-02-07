@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import sk.stuba.fei.uim.dp.attendanceapi.request.GoogleRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.LoginRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
@@ -35,6 +36,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> loginUser(@Valid @RequestBody LoginRequest loginRequest){
         return new ResponseEntity<>(this.userService.login(loginRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/google")
+    public AuthResponse googleLogin(@RequestBody GoogleRequest request){
+        return this.userService.googleLogin(request);
     }
 
     @PostMapping("/refresh")

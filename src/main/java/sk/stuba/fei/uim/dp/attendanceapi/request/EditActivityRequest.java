@@ -13,5 +13,5 @@ public class EditActivityRequest {
             example = "17.05.2024 10:30"
     )
     private String time;
-    private Boolean editAll;
+    private Boolean editAllUpcoming;
 }

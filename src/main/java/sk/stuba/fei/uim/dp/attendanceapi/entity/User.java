@@ -31,6 +31,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "type", nullable = false)
+    private String type;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -46,9 +49,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
 
-    public User(String fullName, String email, String password){
+    public User(String fullName, String email, String password, String type){
         this.fullName = fullName;
         this.email = email;
         this.password = password;
+        this.type = type;
     }
 }

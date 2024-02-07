@@ -27,7 +27,7 @@ public class ActivityWithParticipantsResponse {
         this.time = formatter.format(activity.getTime());
         this.participants = activity.getParticipants().stream().map(participant -> {
             if(participant.getCard().getUser() == null){
-                return new UserResponse(new User("Unknown", "", ""));
+                return new UserResponse(new User("Unknown", "", "",""));
             }
             return new UserResponse(participant.getCard().getUser());
         }).collect(Collectors.toList());

@@ -15,4 +15,9 @@ public interface ActivityRepository extends JpaRepository<Activity, Integer> {
             "WHERE c.user_id = :uid",
             nativeQuery = true)
     List<Activity> getAllUserAttendedActivities(@Param("uid")Integer uid);
+
+//    List<Activity> getAllUpcomingActivities(@Param("group_id")Integer groupId);
+//    SELECT * FROM activity a
+//    WHERE a.group_id=41 AND a.time > CURRENT_DATE
+//    ORDER by a.time
 }

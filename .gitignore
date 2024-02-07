@@ -34,3 +34,4 @@ build/
 
 ### VS Code ###
 .vscode/
+src/main/java/sk/stuba/fei/uim/dp/attendanceapi/security/SecurityConstants.java

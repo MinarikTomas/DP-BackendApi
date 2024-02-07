@@ -1,6 +1,11 @@
 package sk.stuba.fei.uim.dp.attendanceapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+
+import com.google.api.client.json.gson.GsonFactory;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,19 +26,18 @@ import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.user.GoogleLoginException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.RoleRepository;
-import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
-import sk.stuba.fei.uim.dp.attendanceapi.request.ChangePasswordRequest;
-import sk.stuba.fei.uim.dp.attendanceapi.request.LoginRequest;
-import sk.stuba.fei.uim.dp.attendanceapi.request.SignupRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.*;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.UserRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.security.JWTGenerator;
+import sk.stuba.fei.uim.dp.attendanceapi.security.SecurityConstants;
 
 @Service
 public class UserService implements IUserService{
@@ -47,8 +48,10 @@ public class UserService implements IUserService{
     private UserRepository userRepository;
     private ActivityRepository activityRepository;
     private JWTGenerator jwtGenerator;
-
     private CardService cardService;
+    private String clientId = SecurityConstants.CLIENT_ID;
+    private GoogleIdTokenVerifier verifier;
+
     @Autowired
     public UserService(AuthenticationManager authenticationManager,
                        RoleRepository roleRepository,
@@ -64,6 +67,11 @@ public class UserService implements IUserService{
         this.activityRepository = activityRepository;
         this.jwtGenerator = jwtGenerator;
         this.cardService = cardService;
+
+        this.verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
+                .setAudience(Collections.singletonList(clientId))
+                .build();
+
     }
 
     @Override
@@ -77,7 +85,8 @@ public class UserService implements IUserService{
         User user = new User(
                 signupRequest.getName(),
                 signupRequest.getEmail(),
-                passwordEncoder.encode(signupRequest.getPassword())
+                passwordEncoder.encode(signupRequest.getPassword()),
+                "classic"
         );
         Role role = this.roleRepository.findByName("USER");
         user.setRoles(Collections.singletonList(role));
@@ -99,8 +108,38 @@ public class UserService implements IUserService{
         SecurityContextHolder.getContext().setAuthentication(authentication);
         User user = this.userRepository.findByEmail(loginRequest.getEmail());
         String token = jwtGenerator.generateToken(user);
-        String refreshToken = jwtGenerator.generateRefreshToken(authentication);
+        String refreshToken = jwtGenerator.generateRefreshToken(user);
         return new AuthResponse(token, refreshToken);
+    }
+
+    @Override
+    public AuthResponse googleLogin(GoogleRequest request){
+        try {
+            GoogleIdToken idToken = verifier.verify(request.getGoogleToken());
+            if (idToken == null) {
+                throw new GoogleLoginException("Token is invalid");
+            }
+            GoogleIdToken.Payload payload = idToken.getPayload();
+            String email = payload.getEmail();
+            System.out.println(email);
+            System.out.println(payload.get("name").toString());
+            User user = this.getByEmail(email);
+            if (user == null) {
+                user = new User(
+                        payload.get("name").toString(),
+                        email,
+                        "",
+                        "google"
+                );
+                user = this.userRepository.save(user);
+            }
+            String token = this.jwtGenerator.generateToken(user);
+            String refreshToken = this.jwtGenerator.generateRefreshToken(user);
+            return new AuthResponse(token, refreshToken);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            throw new GoogleLoginException("Failed to verify token");
+        }
     }
 
     @Override
