@@ -1,0 +1,32 @@
+.list-view .content{
+    display: flex;
+}
+
+.list-view .user-grid{
+    flex: 2;
+}
+
+.list-view .user-form{
+    flex: 1;
+    padding: var(--lumo-space-m);
+}
+
+a[highlight]{
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.header{
+    padding: 0 var(--lumo-space-m);
+}
+
+.header h1.logo{
+    font-size: 1em;
+    margin: var(--lumo-space-m);
+}
+
+@media all and (max-width: 1100px) {
+    .list-view.editing .user-grid{
+        display: none;
+    }
+}

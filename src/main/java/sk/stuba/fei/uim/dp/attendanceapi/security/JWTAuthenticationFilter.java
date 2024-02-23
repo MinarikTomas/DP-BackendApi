@@ -33,11 +33,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String token = getJWTFromRequest(request);
         if(StringUtils.hasText(token) && tokenGenerator.isTokenValid(token)){
             String username = tokenGenerator.getEmailFromJWT(token);
-
             Collection<GrantedAuthority> authorities = tokenGenerator.getRolesFromJWT(token)
                     .stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
+            System.out.println(authorities);
             User user = new User(username, "", authorities);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     user,

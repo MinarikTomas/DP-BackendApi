@@ -2,6 +2,8 @@ package sk.stuba.fei.uim.dp.attendanceapi.entity;
 
 import jakarta.persistence.*;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,22 +19,33 @@ import java.util.*;
 @Entity
 @Table(name = "user")
 public class User {
+
+    public enum Type {
+        classic, google
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Integer id;
 
+    @NotEmpty
+    @NotNull
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
+    @NotNull
+    @NotEmpty
     @Column(name = "email", nullable = false)
     private String email;
 
     @Column(name = "password", nullable = false)
     private String password;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
-    private String type;
+    private User.Type type;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -49,7 +62,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
 
-    public User(String fullName, String email, String password, String type){
+    public User(String fullName, String email, String password, User.Type type){
         this.fullName = fullName;
         this.email = email;
         this.password = password;

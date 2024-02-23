@@ -139,14 +139,14 @@ public class ActivityService implements IActivityService{
         try{
             card = this.cardService.getBySerialNumber(request.getSerialNumber());
             if(card.getUser() == null){
-                user = new User("Unknown", "", "","");
+                user = new User("Unknown", "", "",null);
             }else{
                 user = card.getUser();
             }
         }catch (CardNotFound e){
             System.out.println("catch block");
             card = this.cardService.createCardWithoutUser(request.getSerialNumber());
-            user = new User("Unknown", "", "","");
+            user = new User("Unknown", "", "",null);
         }
         Participant participant = new Participant(activity, card);
         this.participantRepository.save(participant);

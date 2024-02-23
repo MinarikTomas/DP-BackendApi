@@ -16,7 +16,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.service.ActivityService;
 
 
 @RestController
-@RequestMapping("/activity")
+@RequestMapping("/api/activity")
 @Tag(name = "Activity")
 public class ActivityController {
 

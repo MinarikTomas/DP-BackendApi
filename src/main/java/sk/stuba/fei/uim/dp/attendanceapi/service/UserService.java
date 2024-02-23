@@ -86,7 +86,7 @@ public class UserService implements IUserService{
                 signupRequest.getName(),
                 signupRequest.getEmail(),
                 passwordEncoder.encode(signupRequest.getPassword()),
-                "classic"
+                User.Type.classic
         );
         Role role = this.roleRepository.findByName("USER");
         user.setRoles(Collections.singletonList(role));
@@ -129,7 +129,7 @@ public class UserService implements IUserService{
                         payload.get("name").toString(),
                         email,
                         "",
-                        "google"
+                        User.Type.google
                 );
                 user = this.userRepository.save(user);
             }
@@ -142,6 +142,9 @@ public class UserService implements IUserService{
         }
     }
 
+    public List<User> getAll() {
+        return this.userRepository.findAll();
+    }
     @Override
     public User getById(Integer id) {
         Optional<User> user= this.userRepository.findById(id);
@@ -224,6 +227,17 @@ public class UserService implements IUserService{
             String accessToken = jwtGenerator.generateToken(user);
             AuthResponse authResponse = new AuthResponse(accessToken, refreshToken);
             new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+        }
+    }
+
+    public void save(User user) {
+        try{
+            if (user.getId() == null){
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+            userRepository.save(user);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
         }
     }
 }

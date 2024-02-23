@@ -4,7 +4,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 
@@ -17,6 +20,11 @@ import java.util.stream.Collectors;
 public class JWTGenerator {
 
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    @Bean
+    public MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+        return new MvcRequestMatcher.Builder(introspector);
+    }
+
 
     public String generateToken(User user){
         String email = user.getEmail();
@@ -69,7 +77,9 @@ public class JWTGenerator {
         Object rolesObject = claims.get("roles");
         if(rolesObject != null){
             String rolesString = rolesObject.toString();
-            return Arrays.stream(rolesString.split(",")).toList();
+            return Arrays.stream(rolesString.substring(1, rolesString.length()-1).split(",")).map(
+                    String::trim
+            ).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -80,10 +90,8 @@ public class JWTGenerator {
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-            System.out.println("Token is valid");
             return true;
         }catch (Exception ex){
-            System.out.println("Token is invalid");
             System.out.println(ex.getMessage());
             return false;
         }

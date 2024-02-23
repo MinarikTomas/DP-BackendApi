@@ -12,7 +12,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.response.CardResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.service.CardService;
 
 @RestController
-@RequestMapping("/card")
+@RequestMapping("/api/card")
 @Tag(name = "Card")
 public class CardController {
 
