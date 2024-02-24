@@ -5,6 +5,7 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -71,9 +72,13 @@ public class UserView extends VerticalLayout {
     }
 
     private void saveUser(UserForm.SaveEvent event) {
-        userService.save(event.getUser());
-        updateList(null);
-        closeEditor();
+        try {
+            userService.save(event.getUser());
+            updateList(null);
+            closeEditor();
+        } catch (Exception e) {
+            Notification.show("Failed to save user");
+        }
     }
 
     private void closeEditor() {
@@ -93,15 +98,15 @@ public class UserView extends VerticalLayout {
 
     private List<User> filterList(){
         return users.stream()
-                .filter(user ->
-                        user.getFullName().toUpperCase().contains(nameFilterText.getValue().toUpperCase())
-                        && user.getEmail().toUpperCase().contains(emailFilterText.getValue().toUpperCase())
-                        && user.getType().toString().toUpperCase().contains(typeFilterText.getValue().toUpperCase())
-                        && user.getCreatedAt().toString().contains(createdAtFilterText.getValue())
-                        && user.getId().toString().contains(idFilterText.getValue())
+            .filter(user ->
+                    user.getFullName().toUpperCase().contains(nameFilterText.getValue().toUpperCase())
+                    && user.getEmail().toUpperCase().contains(emailFilterText.getValue().toUpperCase())
+                    && user.getType().toString().toUpperCase().contains(typeFilterText.getValue().toUpperCase())
+                    && user.getCreatedAt().toString().contains(createdAtFilterText.getValue())
+                    && user.getId().toString().contains(idFilterText.getValue())
 
-                )
-                .collect(Collectors.toList());
+            )
+            .collect(Collectors.toList());
     }
 
     private void configureGrid() {
@@ -112,7 +117,7 @@ public class UserView extends VerticalLayout {
         grid.addColumn(user -> {
             List<Role> roles = user.getRoles();
             return roles.toString().substring(1, roles.toString().length() - 1);
-        }).setHeader("Role").setKey("roles");
+        }).setHeader("Role").setKey("roles").setSortable(true);
 
         HeaderRow headerRow = grid.appendHeaderRow();
         headerRow.getCell(grid.getColumnByKey("id")).setComponent(idFilterText);

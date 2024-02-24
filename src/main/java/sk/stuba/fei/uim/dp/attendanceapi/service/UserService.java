@@ -231,13 +231,9 @@ public class UserService implements IUserService{
     }
 
     public void save(User user) {
-        try{
-            if (user.getId() == null){
-                user.setPassword(passwordEncoder.encode(user.getPassword()));
-            }
-            userRepository.save(user);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+        if (user.getId() == null){
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
+        userRepository.save(user);
     }
 }

@@ -11,6 +11,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.repository.CardRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.NameRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,10 @@ public class CardService implements ICardService{
             );
         }
         this.cardRepository.save(card);
+    }
+
+    public List<Card> getAll(){
+        return this.cardRepository.findAll();
     }
 
     @Override
@@ -99,6 +104,14 @@ public class CardService implements ICardService{
     public void addUser(User user, Card card){
         card.setUser(user);
         this.cardRepository.save(card);
+    }
+
+    public void save(Card card){
+        this.cardRepository.save(card);
+    }
+
+    public void delete(Card card){
+        this.cardRepository.delete(card);
     }
 
     private boolean serialNumberExists(String serialNumber){

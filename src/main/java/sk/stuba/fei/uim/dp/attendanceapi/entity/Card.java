@@ -1,6 +1,7 @@
 package sk.stuba.fei.uim.dp.attendanceapi.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class Card {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "user_id")
     private User user;
@@ -32,6 +33,8 @@ public class Card {
     @Column(name = "name")
     private String name;
 
+    @NotNull
+    @NotEmpty
     @Column(name = "serial_number", nullable = false)
     private String serialNumber;
 
@@ -48,5 +51,19 @@ public class Card {
         this.user = user;
         this.name = name;
         this.serialNumber = serialNumber;
+    }
+
+    public String getFormattedName(){
+        if (this.name == null){
+            return "-";
+        }
+        return this.name;
+    }
+
+    public String getFormattedOwner(){
+        if (this.user == null){
+            return "-";
+        }
+        return this.user.getId() + " " + this.user.getFullName();
     }
 }
