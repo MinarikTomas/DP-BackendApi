@@ -19,4 +19,10 @@ public class RoleService {
     public List<Role> getAll(){
         return this.repository.findAll();
     }
+    public void save(String role){
+        this.repository.save(new Role(role));
+    }
+    public void delete(Role role){
+        this.repository.delete(role);
+    }
 }

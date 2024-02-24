@@ -1,11 +1,13 @@
 package sk.stuba.fei.uim.dp.attendanceapi.ui;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.HeaderRow;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
@@ -15,6 +17,8 @@ import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.service.RoleService;
 import sk.stuba.fei.uim.dp.attendanceapi.service.UserService;
+import sk.stuba.fei.uim.dp.attendanceapi.ui.component.AddRoleDialog;
+import sk.stuba.fei.uim.dp.attendanceapi.ui.component.DeleteRoleDialog;
 import sk.stuba.fei.uim.dp.attendanceapi.ui.component.UserForm;
 
 import java.util.List;
@@ -32,6 +36,9 @@ public class UserView extends VerticalLayout {
     TextField typeFilterText = createFilterHeader();
     TextField createdAtFilterText = createFilterHeader();
     TextField roleFilterText = createFilterHeader();
+
+    private final AddRoleDialog addRoleDialog;
+    private final DeleteRoleDialog deleteRoleDialog;
     private UserService userService;
     private RoleService roleService;
     private List<User> users;
@@ -44,20 +51,47 @@ public class UserView extends VerticalLayout {
         setSizeFull();
         configureGrid();
 
-        Button add = new Button("Add user", click -> addUser());
-
         form = new UserForm(this.roleService.getAll());
         form.addListener(UserForm.SaveEvent.class, this::saveUser);
         form.addListener(UserForm.DeleteEvent.class, this::deleteUser);
         form.addListener(UserForm.CloseEvent.class, e -> closeEditor());
 
+        addRoleDialog = new AddRoleDialog();
+        addRoleDialog.addListener(AddRoleDialog.AddEvent.class, this::addRole);
+        deleteRoleDialog = new DeleteRoleDialog();
+        deleteRoleDialog.addListener(DeleteRoleDialog.DeleteEvent.class, this::deleteRole);
+
         Div content = new Div(grid, form);
         content.addClassName("content");
         content.setSizeFull();
 
-        add(add, content);
+        add(getToolbar(), content, addRoleDialog, deleteRoleDialog);
         updateList(users);
         closeEditor();
+    }
+
+    private HorizontalLayout getToolbar(){
+        Button addUser = new Button("Add user", click -> addUser());
+        Button addRole = new Button("Add role", click -> addRoleDialog.open());
+        Button deleteRole = new Button("Delete role", click -> deleteRoleDialog.open(this.roleService.getAll()));
+        deleteRole.addThemeVariants(ButtonVariant.LUMO_ERROR);
+
+        return new HorizontalLayout(addUser, addRole, deleteRole);
+    }
+
+    private void deleteRole(DeleteRoleDialog.DeleteEvent event) {
+        this.roleService.delete(event.getRole());
+        deleteRoleDialog.close();
+    }
+
+    private void addRole(AddRoleDialog.AddEvent event) {
+        try{
+            roleService.save(event.getRole());
+            addRoleDialog.close();
+            addRoleDialog.setRoleName("");
+        }catch (Exception e){
+            Notification.show("Failed to add role");
+        }
     }
 
     private void addUser() {
