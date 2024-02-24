@@ -36,8 +36,8 @@ import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.UserRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
+import sk.stuba.fei.uim.dp.attendanceapi.security.Constants;
 import sk.stuba.fei.uim.dp.attendanceapi.security.JWTGenerator;
-import sk.stuba.fei.uim.dp.attendanceapi.security.SecurityConstants;
 
 @Service
 public class UserService implements IUserService{
@@ -49,7 +49,7 @@ public class UserService implements IUserService{
     private ActivityRepository activityRepository;
     private JWTGenerator jwtGenerator;
     private CardService cardService;
-    private String clientId = SecurityConstants.CLIENT_ID;
+    private String clientId = Constants.CLIENT_ID;
     private GoogleIdTokenVerifier verifier;
 
     @Autowired

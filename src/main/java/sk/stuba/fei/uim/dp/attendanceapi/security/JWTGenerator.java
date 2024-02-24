@@ -29,7 +29,7 @@ public class JWTGenerator {
     public String generateToken(User user){
         String email = user.getEmail();
         Date currentDate = new Date();
-        Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
+        Date expireDate = new Date(currentDate.getTime() + Constants.JWT_EXPIRATION);
 
         String token = Jwts.builder()
                 .setSubject(email)
@@ -48,7 +48,7 @@ public class JWTGenerator {
 
     public String generateRefreshToken(User user){
         Date currentDate = new Date();
-        Date expireDate = new Date(currentDate.getTime() + SecurityConstants.REFRESH_EXPIRATION);
+        Date expireDate = new Date(currentDate.getTime() + Constants.REFRESH_EXPIRATION);
 
         return Jwts.builder()
                 .setClaims(new HashMap<>())
