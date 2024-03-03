@@ -52,7 +52,7 @@ public class UserForm extends FormLayout {
     Binder<User> binder = new BeanValidationBinder<>(User.class);
 
     public UserForm(List<Role> rolesList){
-        addClassName("user-form");
+        addClassName("form");
         initBinder();
 
         setResponsiveSteps(

@@ -2,13 +2,11 @@
     display: flex;
 }
 
-.list-view .user-grid,
-.list-view .card-grid{
+.list-view .grid{
     flex: 2;
 }
 
-.list-view .user-form,
-.list-view .card-form{
+.list-view .form{
     flex: 1;
     padding: var(--lumo-space-m);
 }
@@ -28,8 +26,8 @@ a[highlight]{
 }
 
 @media all and (max-width: 1100px) {
-    .list-view.editing .user-grid,
-    .list-view.editing .card-grid{
+    .list-view.editing .grid,
+    .list-view.editing .toolbar{
         display: none;
     }
 }

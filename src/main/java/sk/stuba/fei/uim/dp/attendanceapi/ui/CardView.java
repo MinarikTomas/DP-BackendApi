@@ -90,7 +90,7 @@ public class CardView extends VerticalLayout {
     }
 
     private void configureGrid() {
-        grid.addClassName("card-grid");
+        grid.addClassName("grid");
         setSizeFull();
         grid.setColumns("id", "active", "serialNumber", "createdAt");
         grid.addColumn(Card::getFormattedOwner).setHeader("Owner").setKey("owner").setSortable(true);
@@ -134,7 +134,7 @@ public class CardView extends VerticalLayout {
     }
 
     private TextField createFilterHeader() {
-        TextField textField = new com.vaadin.flow.component.textfield.TextField();
+        TextField textField = new TextField();
         textField.setValueChangeMode(ValueChangeMode.LAZY);
         textField.getStyle().set("max-width", "100%");
         textField.setClearButtonVisible(true);

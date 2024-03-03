@@ -19,6 +19,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.request.ParticipantRequest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -125,6 +126,10 @@ public class ActivityService implements IActivityService{
         this.activityRepository.delete(activity);
     }
 
+    public void deleteActivity(Activity activity){
+        this.activityRepository.delete(activity);
+    }
+
     @Override
     public User addParticipant(Integer id, ParticipantRequest request) {
         Activity activity = this.getById(id);
@@ -153,4 +158,11 @@ public class ActivityService implements IActivityService{
         return user;
     }
 
+    public List<Activity> getAll() {
+        return this.activityRepository.findAll();
+    }
+
+    public void save(Activity activity) {
+        this.activityRepository.save(activity);
+    }
 }

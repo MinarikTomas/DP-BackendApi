@@ -34,7 +34,7 @@ public class Activity {
     @Column(name = "time", nullable = false)
     private LocalDateTime time;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
@@ -51,8 +51,8 @@ public class Activity {
     @Column(name = "group_id")
     private Integer groupId;
 
-    @OneToMany(mappedBy = "activity")
-    private List<Participant> participants;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "activity")
+    private List<Participant> participants = new ArrayList<>();
 
     public Activity(User user, String name, String location, LocalDateTime time){
         this.createdBy = user;
@@ -60,6 +60,27 @@ public class Activity {
         this.location = location;
         this.time = time;
 
+    }
+
+    public String getFormattedCreatedBy(){
+        if(this.createdBy == null){
+            return "-";
+        }
+        return this.createdBy.getId() + " " + this.createdBy.getFullName();
+    }
+
+    public String getFormattedStartTime(){
+        if(this.startTime == null){
+            return "-";
+        }
+        return this.startTime.toString();
+    }
+
+    public String getFormattedEndTime(){
+        if(this.endTime == null){
+            return "-";
+        }
+        return this.endTime.toString();
     }
 
 }

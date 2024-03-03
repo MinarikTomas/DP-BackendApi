@@ -36,7 +36,7 @@ public class CardForm extends FormLayout {
 
     public CardForm(UserService userService){
         this.userService = userService;
-        addClassName("card-form");
+        addClassName("form");
         initBinder();
         setResponsiveSteps(
                 new ResponsiveStep("0", 1),

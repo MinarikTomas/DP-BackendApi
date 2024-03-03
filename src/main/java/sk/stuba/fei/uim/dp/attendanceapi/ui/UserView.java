@@ -144,7 +144,7 @@ public class UserView extends VerticalLayout {
     }
 
     private void configureGrid() {
-        grid.addClassName("user-grid");
+        grid.addClassName("grid");
         setSizeFull();
         grid.removeColumnByKey("roles");
         grid.setColumns("id", "fullName", "email", "type", "createdAt");
