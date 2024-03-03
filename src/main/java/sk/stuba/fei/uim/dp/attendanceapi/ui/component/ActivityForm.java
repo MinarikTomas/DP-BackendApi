@@ -68,7 +68,7 @@ public class ActivityForm extends FormLayout {
         id.setReadOnly(true);
         startTime.setReadOnly(true);
         endTime.setReadOnly(true);
-        time.setStep(Duration.ofMinutes(30));;
+        time.setStep(Duration.ofMinutes(30));
         binder.bindInstanceFields(this);
         createButtonsLayout();
 

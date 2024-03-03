@@ -101,11 +101,7 @@ public class CardForm extends FormLayout {
 
     public void setCard(Card card){
         if(card != null){
-            if(card.getId() == null){
-                id.setVisible(false);
-            }else{
-                id.setVisible(true);
-            }
+            id.setVisible(card.getId() != null);
         }
         binder.setBean(card);
     }

@@ -12,8 +12,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
-import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
-import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.service.ActivityService;
 import sk.stuba.fei.uim.dp.attendanceapi.service.CardService;
 import sk.stuba.fei.uim.dp.attendanceapi.service.ParticipantService;
