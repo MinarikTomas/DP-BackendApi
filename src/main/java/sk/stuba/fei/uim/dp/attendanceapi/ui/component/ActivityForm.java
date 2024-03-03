@@ -8,6 +8,8 @@ import com.vaadin.flow.component.datetimepicker.DateTimePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.NativeLabel;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -15,6 +17,7 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.shared.Registration;
 import lombok.Getter;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
@@ -76,6 +79,7 @@ public class ActivityForm extends FormLayout {
 
         addParticipantDialog = new AddParticipantDialog();
         addParticipantDialog.addListener(AddParticipantDialog.AddEvent.class, this::addParticipant);
+        addParticipantDialog.addListener(AddParticipantDialog.DeleteEvent.class, this::deleteParticipant);
 
         gridLayout.add(
                 new NativeLabel("Participants"),
@@ -98,15 +102,17 @@ public class ActivityForm extends FormLayout {
         setColspan(gridLayout, 2);
     }
 
+    private void deleteParticipant(AddParticipantDialog.DeleteEvent deleteEvent) {
+
+    }
+
     private void addParticipant(AddParticipantDialog.AddEvent event) {
         try{
             Card card = cardService.getById(event.getCardId());
             participantService.save(new Participant(binder.getBean(), card));
             addParticipantDialog.close();
             addParticipantDialog.setCardIdField(null);
-            participantsGrid.setItems(participantService.getAllByActivityId(
-                    binder.getBean().getId()
-            ));
+            refreshParticipants();
         }catch (CardNotFound e){
             Notification.show("Invalid card id");
         }catch (Exception e){
@@ -125,6 +131,30 @@ public class ActivityForm extends FormLayout {
         participantsGrid.addColumn(this::getCardUserFullName).setHeader("Name")
                 .setSortable(true)
                 .setKey("UserName");
+        participantsGrid.addColumn(
+                new ComponentRenderer<>(Button::new, (button, participnat) -> {
+                    button.addThemeVariants(ButtonVariant.LUMO_ICON,
+                            ButtonVariant.LUMO_ERROR,
+                            ButtonVariant.LUMO_TERTIARY);
+                    button.addClickListener(e -> this.removeParticipant(participnat));
+                    button.setIcon(new Icon(VaadinIcon.TRASH));
+                })
+        ).setHeader("Manage").setKey("manage");
+        participantsGrid.getColumns().forEach(participantColumn -> participantColumn.setAutoWidth(true));
+    }
+
+    private void removeParticipant(Participant participnat) {
+        if(participnat == null){
+            return;
+        }
+        participantService.delete(participnat);
+        refreshParticipants();
+    }
+
+    private void refreshParticipants(){
+        participantsGrid.setItems(participantService.getAllByActivityId(
+                binder.getBean().getId()
+        ));
     }
 
     private String getCardId(Participant participant) {

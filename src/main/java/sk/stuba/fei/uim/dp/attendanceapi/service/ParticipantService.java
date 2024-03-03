@@ -21,4 +21,8 @@ public class ParticipantService {
     public void save(Participant participant){
         this.participantRepository.save(participant);
     }
+
+    public void delete(Participant participant){
+        this.participantRepository.delete(participant);
+    }
 }

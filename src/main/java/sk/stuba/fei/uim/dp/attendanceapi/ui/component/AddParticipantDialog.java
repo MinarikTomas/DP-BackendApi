@@ -57,6 +57,10 @@ public class AddParticipantDialog extends Dialog {
         }
     }
 
+    public static class DeleteEvent extends AddParticipantDialogEvent{
+        DeleteEvent(AddParticipantDialog source, Integer cardId) {super(source, cardId);}
+    }
+
     public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType,
                                                                   ComponentEventListener<T> listener){
         return getEventBus().addListener(eventType, listener);
