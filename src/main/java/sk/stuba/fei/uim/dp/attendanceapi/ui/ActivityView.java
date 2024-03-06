@@ -11,6 +11,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.service.ActivityService;
 import sk.stuba.fei.uim.dp.attendanceapi.service.CardService;
@@ -24,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Route(value = "activity", layout = MainLayout.class)
 @CssImport("./styles/shared-styles.css")
-@AnonymousAllowed
+@RolesAllowed("ROLE_ADMIN")
 public class ActivityView extends VerticalLayout {
 
     Grid<Activity> grid = new Grid<>(Activity.class);

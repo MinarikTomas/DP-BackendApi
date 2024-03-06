@@ -88,7 +88,7 @@ public class UserService implements IUserService{
                 passwordEncoder.encode(signupRequest.getPassword()),
                 User.Type.classic
         );
-        Role role = this.roleRepository.findByName("USER");
+        Role role = this.roleRepository.findByName("ROLE_USER");
         user.setRoles(Collections.singletonList(role));
         User savedUser = this.userRepository.save(user);
 

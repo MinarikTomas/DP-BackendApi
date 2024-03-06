@@ -12,7 +12,8 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.auth.AnonymousAllowed;
+import jakarta.annotation.security.PermitAll;
+import jakarta.annotation.security.RolesAllowed;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.service.RoleService;
@@ -24,9 +25,9 @@ import sk.stuba.fei.uim.dp.attendanceapi.ui.component.UserForm;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Route(value = "", layout = MainLayout.class)
+@Route(value = "/user", layout = MainLayout.class)
 @CssImport("./styles/shared-styles.css")
-@AnonymousAllowed
+@RolesAllowed("ROLE_ADMIN")
 public class UserView extends VerticalLayout {
     Grid<User> grid = new Grid<>(User.class);
     private final UserForm form;

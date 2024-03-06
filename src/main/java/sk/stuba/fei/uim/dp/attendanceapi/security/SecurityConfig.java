@@ -1,5 +1,6 @@
 package sk.stuba.fei.uim.dp.attendanceapi.security;
 
+import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import sk.stuba.fei.uim.dp.attendanceapi.ui.LoginView;
 
 @Configuration
 @EnableWebSecurity
@@ -52,16 +55,33 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
+    @Configuration
     @Order(2)
-    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> {
-                    auth.anyRequest().permitAll();
-                });
-        return http.build();
+    public static class WebSecurityConfiguration extends VaadinWebSecurity{
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.authorizeHttpRequests(auth ->
+                    auth.requestMatchers(AntPathRequestMatcher.antMatcher("/images/*.png")).permitAll()
+            );
+            super.configure(http);
+            setLoginView(http, LoginView.class);
+        }
     }
+
+//    @Bean
+//    @Order(2)
+//    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(csrf -> csrf.disable())
+//                .authorizeHttpRequests(auth -> {
+//                    auth.anyRequest().permitAll();
+//                })
+//                .formLogin(loginConfigurer -> {
+//                    loginConfigurer.loginPage("/login").permitAll();
+//                    loginConfigurer.loginProcessingUrl("/login");
+//                });
+//        return http.build();
+//    }
 
     @Bean
     public AuthenticationManager authenticationManager(
