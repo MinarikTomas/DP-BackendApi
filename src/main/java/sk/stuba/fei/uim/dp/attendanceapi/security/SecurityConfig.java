@@ -4,6 +4,7 @@ import com.vaadin.flow.spring.security.VaadinWebSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -16,43 +17,51 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import sk.stuba.fei.uim.dp.attendanceapi.ui.LoginView;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private JwtAuthEntryPoint authEntryPoint;
-
-    private CustomUserDetailsService userDetailsService;
-
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint) {
-        this.userDetailsService = userDetailsService;
-        this.authEntryPoint = authEntryPoint;
-    }
+    private CustomUserDetailsService userDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Autowired
-    MvcRequestMatcher.Builder mvc;
     @Bean
+    public MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+        return new MvcRequestMatcher.Builder(introspector);
+    }
+
     @Order(1)
-    public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .securityMatcher("/api/**")
-                .csrf(csrf -> csrf.disable())
-                .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authEntryPoint))
-                .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests( auth -> {
-                    auth.requestMatchers(mvc.pattern("/api/auth//google"), mvc.pattern("/api/auth/login"),mvc.pattern("/api/auth/signup"), mvc.pattern("/api/")).permitAll();
-                    auth.anyRequest().permitAll();
-                });
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-        return http.build();
+    @Configuration
+    public static class RestSecurityConfig{
+        @Autowired
+        private JwtAuthEntryPoint authEntryPoint;
+
+        @Autowired
+        MvcRequestMatcher.Builder mvc;
+        @Bean
+        public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+            http
+                    .securityMatcher("/api/**")
+                    .csrf(csrf -> csrf.disable())
+                    .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authEntryPoint))
+                    .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests( auth -> {
+                        auth.requestMatchers(mvc.pattern("/api/auth/google"), mvc.pattern("/api/auth/login"),mvc.pattern("/api/auth/signup"), mvc.pattern("/api/")).permitAll();
+                        auth.anyRequest().authenticated();
+                    });
+            http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+            return http.build();
+        }
+        @Bean
+        public JWTAuthenticationFilter jwtAuthenticationFilter(){
+            return new JWTAuthenticationFilter();
+        }
     }
 
     @Configuration
@@ -68,29 +77,9 @@ public class SecurityConfig {
         }
     }
 
-//    @Bean
-//    @Order(2)
-//    public SecurityFilterChain adminSecurityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(auth -> {
-//                    auth.anyRequest().permitAll();
-//                })
-//                .formLogin(loginConfigurer -> {
-//                    loginConfigurer.loginPage("/login").permitAll();
-//                    loginConfigurer.loginProcessingUrl("/login");
-//                });
-//        return http.build();
-//    }
-
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public JWTAuthenticationFilter jwtAuthenticationFilter(){
-        return new JWTAuthenticationFilter();
     }
 }

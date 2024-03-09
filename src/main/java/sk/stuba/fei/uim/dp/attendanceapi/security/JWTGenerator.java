@@ -20,11 +20,6 @@ import java.util.stream.Collectors;
 public class JWTGenerator {
 
     private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    @Bean
-    public MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
-        return new MvcRequestMatcher.Builder(introspector);
-    }
-
 
         public String generateToken(User user){
         String email = user.getEmail();
