@@ -175,7 +175,7 @@ public class UserService implements IUserService{
     @Override
     public List<Activity> getUserCreatedActivities(Integer id) {
         List<Activity> activities = this.getById(id).getMyActivities();
-        Collections.sort(activities, Comparator.comparing(Activity::getTime));
+        activities.sort(Comparator.comparing(Activity::getTime));
         return activities;
     }
 

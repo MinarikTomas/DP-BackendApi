@@ -2,6 +2,7 @@ package sk.stuba.fei.uim.dp.attendanceapi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class CardController {
             summary = "Get card using serial number"
     )
     @GetMapping
-    public CardResponse getBySerialNumber(@RequestBody SerialNumberRequest request){
+    public CardResponse getBySerialNumber(@Valid @RequestBody SerialNumberRequest request){
         return new CardResponse(this.cardService.getBySerialNumber(request.getSerialNumber()));
     }
 
@@ -43,7 +44,7 @@ public class CardController {
             summary = "Update card"
     )
     @PutMapping("/{id}")
-    public CardResponse update(@PathVariable("id")Integer id, @RequestBody NameRequest request){
+    public CardResponse update(@PathVariable("id")Integer id, @Valid @RequestBody NameRequest request){
         return new CardResponse(this.cardService.update(request, id));
     }
 

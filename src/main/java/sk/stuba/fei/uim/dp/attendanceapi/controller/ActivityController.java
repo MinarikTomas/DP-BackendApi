@@ -2,13 +2,14 @@ package sk.stuba.fei.uim.dp.attendanceapi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.EditActivityRequest;
-import sk.stuba.fei.uim.dp.attendanceapi.request.ParticipantRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.SerialNumberRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.ActivityWithParticipantsResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.response.UserResponse;
@@ -28,7 +29,7 @@ public class ActivityController {
             summary = "Create activity"
     )
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<String> createActivity(@RequestBody ActivityRequest request){
+    public ResponseEntity<String> createActivity(@Valid @RequestBody ActivityRequest request){
         this.activityService.createActivity(request);
         return new ResponseEntity<>("Activity created", HttpStatus.CREATED);
     }
@@ -47,12 +48,12 @@ public class ActivityController {
             summary = "add participant"
     )
     @PostMapping("/{id}")
-    public UserResponse addParticipant(@PathVariable("id")Integer id, @RequestBody ParticipantRequest request){
+    public UserResponse addParticipant(@PathVariable("id")Integer id, @Valid @RequestBody SerialNumberRequest request){
         return new UserResponse(this.activityService.addParticipant(id, request));
     }
 
     @PutMapping("/{id}")
-    public ActivityResponse update(@PathVariable("id")Integer id, @RequestBody EditActivityRequest request){
+    public ActivityResponse update(@PathVariable("id")Integer id, @Valid @RequestBody EditActivityRequest request){
         return new ActivityResponse(this.activityService.update(id, request));
     }
 

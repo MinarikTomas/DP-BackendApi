@@ -1,6 +1,5 @@
 package sk.stuba.fei.uim.dp.attendanceapi.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
@@ -15,7 +14,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ParticipantRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.EditActivityRequest;
-import sk.stuba.fei.uim.dp.attendanceapi.request.ParticipantRequest;
+import sk.stuba.fei.uim.dp.attendanceapi.request.SerialNumberRequest;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -135,7 +134,7 @@ public class ActivityService implements IActivityService{
     }
 
     @Override
-    public User addParticipant(Integer id, ParticipantRequest request) {
+    public User addParticipant(Integer id, SerialNumberRequest request) {
         Activity activity = this.getById(id);
         if(activity.getStartTime() == null){
             throw new ActivityNotStarted("The activity has not started yet.");

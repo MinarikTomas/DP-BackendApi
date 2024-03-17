@@ -3,6 +3,7 @@ package sk.stuba.fei.uim.dp.attendanceapi.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class UserController {
             summary = "Change password"
     )
     @PutMapping("/{id}")
-    public void changePassword(@PathVariable("id")Integer id, @RequestBody ChangePasswordRequest request){
+    public void changePassword(@PathVariable("id")Integer id, @Valid @RequestBody ChangePasswordRequest request){
         this.userService.changePassword(id, request);
     }
 
@@ -49,7 +50,7 @@ public class UserController {
             summary = "Get user using email"
     )
     @GetMapping(consumes = "application/json")
-    public UserResponse getUserByEmail(@RequestBody EmailRequest request){
+    public UserResponse getUserByEmail(@Valid @RequestBody EmailRequest request){
         return new UserResponse(this.userService.getByEmail(request.getEmail()));
     }
 
@@ -108,13 +109,13 @@ public class UserController {
             summary = "Add card to user"
     )
     @PostMapping("/{id}/cards")
-    public ResponseEntity<String> addCard(@PathVariable("id")Integer id, @RequestBody CardRequest request){
+    public ResponseEntity<String> addCard(@PathVariable("id")Integer id, @Valid @RequestBody CardRequest request){
         this.userService.addCard(request, id);
         return new ResponseEntity<>("Card added", HttpStatus.CREATED);
     }
 
     @PostMapping("/resetPassword")
-    public void resetPassword(HttpServletRequest request, @RequestBody EmailRequest requestBody){
+    public void resetPassword(HttpServletRequest request, @Valid @RequestBody EmailRequest requestBody){
         this.userService.resetPassword(request, requestBody);
     }
 
