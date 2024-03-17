@@ -30,7 +30,7 @@ public class CardForm extends FormLayout {
     Button close = new Button("Cancel");
     HorizontalLayout toolbar = new HorizontalLayout();
 
-    private UserService userService;
+    private final UserService userService;
 
     Binder<Card> binder = new BeanValidationBinder<>(Card.class);
 
@@ -114,7 +114,7 @@ public class CardForm extends FormLayout {
 
     @Getter
     public static abstract class CardFormEvent extends ComponentEvent<CardForm> {
-        private Card card;
+        private final Card card;
 
         protected CardFormEvent(CardForm source, Card card){
             super(source, false);

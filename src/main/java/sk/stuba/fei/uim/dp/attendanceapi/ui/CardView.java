@@ -36,7 +36,7 @@ public class CardView extends VerticalLayout {
     TextField ownerFilterText = createFilterHeader();
 
 
-    private CardService cardService;
+    private final CardService cardService;
     private List<Card> cards;
 
     public CardView(CardService cardService, UserService userService){

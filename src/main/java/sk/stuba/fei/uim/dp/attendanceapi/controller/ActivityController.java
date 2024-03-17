@@ -21,8 +21,11 @@ import sk.stuba.fei.uim.dp.attendanceapi.service.ActivityService;
 @Tag(name = "Activity")
 public class ActivityController {
 
-    @Autowired
-    private ActivityService activityService;
+    private final ActivityService activityService;
+
+    public ActivityController(ActivityService activityService) {
+        this.activityService = activityService;
+    }
 
     @Operation(
             description = "Create a new activity",

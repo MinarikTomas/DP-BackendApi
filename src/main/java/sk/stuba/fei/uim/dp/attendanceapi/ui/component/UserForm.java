@@ -147,7 +147,7 @@ public class UserForm extends FormLayout {
 
     @Getter
     public static abstract class UserFormEvent extends ComponentEvent<UserForm>{
-        private User user;
+        private final User user;
 
         protected UserFormEvent(UserForm source, User user){
             super(source, false);

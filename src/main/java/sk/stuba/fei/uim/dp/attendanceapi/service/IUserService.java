@@ -14,7 +14,7 @@ import java.util.List;
 public interface IUserService {
     void create(SignupRequest signupRequest);
     AuthResponse login(LoginRequest loginRequest);
-    AuthResponse googleLogin(GoogleRequest request) throws GeneralSecurityException, IOException;
+    AuthResponse googleLogin(GoogleRequest request);
     User getById(Integer id);
     User getByEmail(String email);
     List<Activity> getAttendedActivities(Integer id);

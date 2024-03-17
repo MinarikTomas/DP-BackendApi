@@ -3,10 +3,6 @@ package sk.stuba.fei.uim.dp.attendanceapi.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Data
 public class ActivityRequest {

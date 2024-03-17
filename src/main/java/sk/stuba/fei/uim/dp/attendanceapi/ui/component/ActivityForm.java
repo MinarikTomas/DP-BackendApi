@@ -53,10 +53,10 @@ public class ActivityForm extends FormLayout {
     HorizontalLayout toolbar = new HorizontalLayout();
     Binder<Activity> binder = new BeanValidationBinder<>(Activity.class);
 
-    private UserService userService;
+    private final UserService userService;
 
-    private CardService cardService;
-    private ParticipantService participantService;
+    private final CardService cardService;
+    private final ParticipantService participantService;
 
     public ActivityForm(UserService userService, CardService cardService, ParticipantService participantService){
         this.userService = userService;
@@ -79,7 +79,6 @@ public class ActivityForm extends FormLayout {
 
         addParticipantDialog = new AddParticipantDialog();
         addParticipantDialog.addListener(AddParticipantDialog.AddEvent.class, this::addParticipant);
-        addParticipantDialog.addListener(AddParticipantDialog.DeleteEvent.class, this::deleteParticipant);
 
         gridLayout.add(
                 new NativeLabel("Participants"),
@@ -100,10 +99,6 @@ public class ActivityForm extends FormLayout {
         );
         setColspan(toolbar, 2);
         setColspan(gridLayout, 2);
-    }
-
-    private void deleteParticipant(AddParticipantDialog.DeleteEvent deleteEvent) {
-
     }
 
     private void addParticipant(AddParticipantDialog.AddEvent event) {
@@ -250,7 +245,7 @@ public class ActivityForm extends FormLayout {
 
     @Getter
     public static abstract class ActivityFormEvent extends ComponentEvent<ActivityForm> {
-        private Activity activity;
+        private final Activity activity;
 
         protected ActivityFormEvent(ActivityForm source, Activity activity){
             super(source, false);

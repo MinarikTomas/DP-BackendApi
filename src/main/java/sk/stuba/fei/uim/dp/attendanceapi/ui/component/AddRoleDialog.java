@@ -44,7 +44,7 @@ public class AddRoleDialog extends Dialog {
 
     @Getter
     public static abstract class AddRoleDialogEvent extends ComponentEvent<AddRoleDialog> {
-        private String role;
+        private final String role;
 
         protected AddRoleDialogEvent(AddRoleDialog source, String role){
             super(source, false);

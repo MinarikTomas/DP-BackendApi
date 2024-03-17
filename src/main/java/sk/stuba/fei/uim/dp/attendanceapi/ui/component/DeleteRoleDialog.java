@@ -50,7 +50,7 @@ public class DeleteRoleDialog extends Dialog {
 
     @Getter
     public static abstract class DeleteRoleDialogEvent extends ComponentEvent<DeleteRoleDialog> {
-        private Role role;
+        private final Role role;
 
         protected DeleteRoleDialogEvent(DeleteRoleDialog source, Role role){
             super(source, false);

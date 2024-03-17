@@ -43,7 +43,7 @@ public class AddParticipantDialog extends Dialog {
 
     @Getter
     public static abstract class AddParticipantDialogEvent extends ComponentEvent<AddParticipantDialog> {
-        private Integer cardId;
+        private final Integer cardId;
 
         protected AddParticipantDialogEvent(AddParticipantDialog source, Integer cardId){
             super(source, false);
@@ -55,10 +55,6 @@ public class AddParticipantDialog extends Dialog {
         AddEvent(AddParticipantDialog source, Integer cardId){
             super(source, cardId);
         }
-    }
-
-    public static class DeleteEvent extends AddParticipantDialogEvent{
-        DeleteEvent(AddParticipantDialog source, Integer cardId) {super(source, cardId);}
     }
 
     public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType,

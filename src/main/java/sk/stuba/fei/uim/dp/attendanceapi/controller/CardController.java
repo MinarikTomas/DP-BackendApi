@@ -17,8 +17,11 @@ import sk.stuba.fei.uim.dp.attendanceapi.service.CardService;
 @Tag(name = "Card")
 public class CardController {
 
-    @Autowired
-    private CardService cardService;
+    private final CardService cardService;
+
+    public CardController(CardService cardService) {
+        this.cardService = cardService;
+    }
 
 
     @Operation(

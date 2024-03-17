@@ -41,8 +41,8 @@ public class UserView extends VerticalLayout {
 
     private final AddRoleDialog addRoleDialog;
     private final DeleteRoleDialog deleteRoleDialog;
-    private UserService userService;
-    private RoleService roleService;
+    private final UserService userService;
+    private final RoleService roleService;
     private List<User> users;
 
     public UserView(UserService userService, RoleService roleService) {

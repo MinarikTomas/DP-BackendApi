@@ -24,8 +24,11 @@ import java.util.stream.Collectors;
 @Tag(name = "User")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @Operation(
             description = "Returns the user with the given ID",

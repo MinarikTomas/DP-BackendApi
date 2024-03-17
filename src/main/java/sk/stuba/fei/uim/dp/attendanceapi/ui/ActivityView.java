@@ -39,7 +39,7 @@ public class ActivityView extends VerticalLayout {
     TextField createdByFilterText = createFilterHeader();
     TextField startTimeFilterText = createFilterHeader();
     TextField endTimeFilterText = createFilterHeader();
-    private ActivityService activityService;
+    private final ActivityService activityService;
     private List<Activity> activities;
 
     public ActivityView(ActivityService activityService, UserService userService,
