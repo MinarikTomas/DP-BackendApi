@@ -7,8 +7,6 @@ import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 
 public interface IUserService {
