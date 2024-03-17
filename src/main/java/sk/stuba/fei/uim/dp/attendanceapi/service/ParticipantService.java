@@ -8,7 +8,7 @@ import java.util.List;
 
 @Service
 public class ParticipantService {
-    private ParticipantRepository participantRepository;
+    private final ParticipantRepository participantRepository;
 
     public ParticipantService(ParticipantRepository participantRepository) {
         this.participantRepository = participantRepository;

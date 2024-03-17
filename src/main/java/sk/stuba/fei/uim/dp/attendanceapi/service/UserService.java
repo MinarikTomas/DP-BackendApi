@@ -41,17 +41,16 @@ import sk.stuba.fei.uim.dp.attendanceapi.security.JWTGenerator;
 @Service
 public class UserService implements IUserService{
 
-    private AuthenticationManager authenticationManager;
-    private RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
-    private UserRepository userRepository;
-    private ActivityRepository activityRepository;
-    private JWTGenerator jwtGenerator;
-    private CardService cardService;
-    private String clientId = Constants.CLIENT_ID;
-    private GoogleIdTokenVerifier verifier;
+    private final AuthenticationManager authenticationManager;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final ActivityRepository activityRepository;
+    private final JWTGenerator jwtGenerator;
+    private final CardService cardService;
+    private final GoogleIdTokenVerifier verifier;
 
-    EmailSender emailSender;
+    private final EmailSender emailSender;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
 
     @Autowired
@@ -73,6 +72,7 @@ public class UserService implements IUserService{
         this.cardService = cardService;
         this.emailSender = emailSender;
 
+        String clientId = Constants.CLIENT_ID;
         this.verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singletonList(clientId))
                 .build();

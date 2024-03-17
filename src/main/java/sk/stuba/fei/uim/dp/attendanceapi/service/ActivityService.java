@@ -24,16 +24,20 @@ import java.util.Optional;
 
 @Service
 public class ActivityService implements IActivityService{
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private CardService cardService;
-    @Autowired
-    private ActivityRepository activityRepository;
-    @Autowired
-    private ParticipantRepository participantRepository;
+    private final UserService userService;
+    private final CardService cardService;
+    private final ActivityRepository activityRepository;
+    private final ParticipantRepository participantRepository;
 
     private final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
+    public ActivityService(UserService userService, CardService cardService, ActivityRepository activityRepository, ParticipantRepository participantRepository) {
+        this.userService = userService;
+        this.cardService = cardService;
+        this.activityRepository = activityRepository;
+        this.participantRepository = participantRepository;
+    }
+
     @Override
     public void createActivity(ActivityRequest request){
         LocalDateTime time = LocalDateTime.parse(request.getTime(), FORMATTER);

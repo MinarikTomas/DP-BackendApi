@@ -17,8 +17,11 @@ import java.util.Optional;
 @Service
 public class CardService implements ICardService{
 
-    @Autowired
-    private CardRepository cardRepository;
+    private final CardRepository cardRepository;
+
+    public CardService(CardRepository cardRepository) {
+        this.cardRepository = cardRepository;
+    }
 
     @Override
     public void createCard(CardRequest request, User user) {

@@ -1,6 +1,5 @@
 package sk.stuba.fei.uim.dp.attendanceapi.ui;
 
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.notification.Notification;
