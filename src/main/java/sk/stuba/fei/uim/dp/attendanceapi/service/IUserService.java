@@ -1,5 +1,6 @@
 package sk.stuba.fei.uim.dp.attendanceapi.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
 import sk.stuba.fei.uim.dp.attendanceapi.request.*;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
@@ -28,4 +29,6 @@ public interface IUserService {
 
     void changePassword(Integer id, ChangePasswordRequest request);
     void deleteUser(Integer id);
+
+    void resetPassword(HttpServletRequest httpServletRequest, EmailRequest request);
 }

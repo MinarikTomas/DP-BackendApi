@@ -22,18 +22,17 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
-import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
+import sk.stuba.fei.uim.dp.attendanceapi.email.EmailSender;
+import sk.stuba.fei.uim.dp.attendanceapi.entity.*;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.GoogleLoginException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
+import sk.stuba.fei.uim.dp.attendanceapi.repository.PasswordResetTokenRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.RoleRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.*;
-import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
-import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.UserRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.response.AuthResponse;
 import sk.stuba.fei.uim.dp.attendanceapi.security.Constants;
@@ -52,6 +51,9 @@ public class UserService implements IUserService{
     private String clientId = Constants.CLIENT_ID;
     private GoogleIdTokenVerifier verifier;
 
+    EmailSender emailSender;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
+
     @Autowired
     public UserService(AuthenticationManager authenticationManager,
                        RoleRepository roleRepository,
@@ -59,7 +61,9 @@ public class UserService implements IUserService{
                        UserRepository userRepository,
                        ActivityRepository activityRepository,
                        JWTGenerator jwtGenerator,
-                       CardService cardService) {
+                       CardService cardService,
+                       EmailSender emailSender,
+                       PasswordResetTokenRepository passwordResetTokenRepository) {
         this.authenticationManager = authenticationManager;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
@@ -67,11 +71,13 @@ public class UserService implements IUserService{
         this.activityRepository = activityRepository;
         this.jwtGenerator = jwtGenerator;
         this.cardService = cardService;
+        this.emailSender = emailSender;
 
         this.verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singletonList(clientId))
                 .build();
 
+        this.passwordResetTokenRepository = passwordResetTokenRepository;
     }
 
     @Override
@@ -204,13 +210,36 @@ public class UserService implements IUserService{
         User user = this.getById(id);
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         this.userRepository.save(user);
+    }
 
+    public void changePassword(User user, String newPassword){
+        user.setPassword(passwordEncoder.encode(newPassword));
+        this.userRepository.save(user);
     }
 
     @Override
     public void deleteUser(Integer id) {
         User user = this.getById(id);
         this.userRepository.delete(user);
+    }
+
+    @Override
+    public void resetPassword(HttpServletRequest httpServletRequest, EmailRequest request) {
+        User user = this.getByEmail(request.getEmail());
+        PasswordResetToken token = passwordResetTokenRepository.findByUser(user);
+
+        if(token != null){
+            if(isTokenExpired(token)){
+                token.extendExpiryDate();
+                token.setToken(UUID.randomUUID().toString());
+            }
+        }else{
+            token = new PasswordResetToken(user, UUID.randomUUID().toString());
+        }
+
+        passwordResetTokenRepository.save(token);
+        String url = getAppUrl(httpServletRequest) + "/resetPassword?token=" + token.getToken();
+        emailSender.sendEmail(request.getEmail(), "Password reset", url);
     }
 
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -235,5 +264,25 @@ public class UserService implements IUserService{
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         userRepository.save(user);
+    }
+
+    public boolean validatePasswordResetToken(String token){
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
+        if(passwordResetToken == null) return false;
+        return !isTokenExpired(passwordResetToken);
+    }
+
+    public User getUserByPasswordResetToken(String token){
+        PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
+        return passwordResetToken.getUser();
+    }
+
+    private boolean isTokenExpired(PasswordResetToken token){
+        Calendar calendar = Calendar.getInstance();
+        return token.getExpiry().before(calendar.getTime());
+    }
+
+    private String getAppUrl(HttpServletRequest request) {
+        return "http://" + request.getServerName() + ":" + request.getServerPort() + request.getContextPath();
     }
 }

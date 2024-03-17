@@ -2,6 +2,7 @@ package sk.stuba.fei.uim.dp.attendanceapi.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -110,6 +111,11 @@ public class UserController {
     public ResponseEntity<String> addCard(@PathVariable("id")Integer id, @RequestBody CardRequest request){
         this.userService.addCard(request, id);
         return new ResponseEntity<>("Card added", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/resetPassword")
+    public void resetPassword(HttpServletRequest request, @RequestBody EmailRequest requestBody){
+        this.userService.resetPassword(request, requestBody);
     }
 
     @Operation(

@@ -52,7 +52,12 @@ public class SecurityConfig {
                     .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(authEntryPoint))
                     .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .authorizeHttpRequests( auth -> {
-                        auth.requestMatchers(mvc.pattern("/api/auth/google"), mvc.pattern("/api/auth/login"),mvc.pattern("/api/auth/signup"), mvc.pattern("/api/")).permitAll();
+                        auth.requestMatchers(
+                                mvc.pattern("/api/auth/google"),
+                                mvc.pattern("/api/auth/login"),
+                                mvc.pattern("/api/auth/signup"),
+                                mvc.pattern("/api/user/resetPassword"),
+                                mvc.pattern("/api/")).permitAll();
                         auth.anyRequest().authenticated();
                     });
             http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -70,7 +75,9 @@ public class SecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeHttpRequests(auth ->
-                    auth.requestMatchers(AntPathRequestMatcher.antMatcher("/images/*.png")).permitAll()
+                    auth.requestMatchers(
+                            AntPathRequestMatcher.antMatcher("/images/*.png"),
+                            AntPathRequestMatcher.antMatcher("/resetPassword")).permitAll()
             );
             super.configure(http);
             setLoginView(http, LoginView.class);
