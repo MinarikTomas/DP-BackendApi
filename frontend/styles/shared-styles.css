@@ -4,6 +4,7 @@
 
 .list-view .grid{
     flex: 2;
+    height: 100%;
 }
 
 .list-view .form{

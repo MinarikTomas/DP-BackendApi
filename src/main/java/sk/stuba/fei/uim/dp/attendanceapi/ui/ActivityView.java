@@ -57,7 +57,6 @@ public class ActivityView extends VerticalLayout {
         Div content = new Div(grid, form);
         content.addClassName("content");
         content.setSizeFull();
-        content.setHeightFull();
 
         Button add = new Button("Add activity", click -> addActivity());
 
@@ -100,7 +99,6 @@ public class ActivityView extends VerticalLayout {
         grid.addClassName("grid");
         setSizeFull();
         grid.setColumns("id", "name", "location", "time", "createdAt");
-        grid.getStyle().set("height", "100%");
         grid.addColumn(Activity::getFormattedCreatedBy)
                 .setSortable(true)
                 .setHeader("Created by")
