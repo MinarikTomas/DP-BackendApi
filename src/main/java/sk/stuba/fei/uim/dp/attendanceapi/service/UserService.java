@@ -72,7 +72,7 @@ public class UserService implements IUserService{
         this.cardService = cardService;
         this.emailSender = emailSender;
 
-        String clientId = Constants.CLIENT_ID;
+        String clientId = Constants.CLIENT_ID.trim();
         this.verifier = new GoogleIdTokenVerifier.Builder(new NetHttpTransport(), new GsonFactory())
                 .setAudience(Collections.singletonList(clientId))
                 .build();
@@ -123,13 +123,14 @@ public class UserService implements IUserService{
         try {
             GoogleIdToken idToken = verifier.verify(request.getGoogleToken());
             if (idToken == null) {
+                System.out.println("Invalid google token");
                 throw new GoogleLoginException("Token is invalid");
             }
             GoogleIdToken.Payload payload = idToken.getPayload();
             String email = payload.getEmail();
             System.out.println(email);
             System.out.println(payload.get("name").toString());
-            User user = this.getByEmail(email);
+            User user = userRepository.findByEmail(email);
             if (user == null) {
                 user = new User(
                         payload.get("name").toString(),
@@ -137,6 +138,7 @@ public class UserService implements IUserService{
                         "",
                         User.Type.google
                 );
+                user.setRoles(Collections.singletonList(roleRepository.findByName("ROLE_USER")));
                 user = this.userRepository.save(user);
             }
             String token = this.jwtGenerator.generateToken(user);

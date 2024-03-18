@@ -37,7 +37,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                     .stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
-            System.out.println(authorities);
             User user = new User(username, "", authorities);
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                     user,
