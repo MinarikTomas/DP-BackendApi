@@ -24,7 +24,7 @@ import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Participant;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.service.CardService;
 import sk.stuba.fei.uim.dp.attendanceapi.service.ParticipantService;
@@ -108,7 +108,7 @@ public class ActivityForm extends FormLayout {
             addParticipantDialog.close();
             addParticipantDialog.setCardIdField(null);
             refreshParticipants();
-        }catch (CardNotFound e){
+        }catch (CardNotFoundException e){
             Notification.show("Invalid card id");
         }catch (Exception e){
             Notification.show("Failed to add participant");

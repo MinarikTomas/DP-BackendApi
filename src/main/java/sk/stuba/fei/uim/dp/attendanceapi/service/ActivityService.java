@@ -5,11 +5,11 @@ import sk.stuba.fei.uim.dp.attendanceapi.entity.Activity;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Participant;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyEnded;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyStarted;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotFound;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStarted;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyEndedException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyStartedException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotFoundException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStartedException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ActivityRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.ParticipantRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.ActivityRequest;
@@ -71,14 +71,14 @@ public class ActivityService implements IActivityService{
         if(activity.isPresent()){
             return activity.get();
         }
-        throw new ActivityNotFound("Activity not found.");
+        throw new ActivityNotFoundException("Activity not found.");
     }
 
     @Override
     public void startActivity(Integer id) {
         Activity activity = this.getById(id);
         if(activity.getStartTime() != null){
-            throw new ActivityAlreadyStarted("The Activity already started.");
+            throw new ActivityAlreadyStartedException("The Activity already started.");
         }
         activity.setStartTime(LocalDateTime.now());
         this.activityRepository.save(activity);
@@ -88,10 +88,10 @@ public class ActivityService implements IActivityService{
     public void endActivity(Integer id) {
         Activity activity = this.getById(id);
         if(activity.getEndTime() != null){
-            throw new ActivityAlreadyEnded("The Activity already ended.");
+            throw new ActivityAlreadyEndedException("The Activity already ended.");
         }
         if(activity.getStartTime() == null){
-            throw new ActivityNotStarted("The Activity has not started yet.");
+            throw new ActivityNotStartedException("The Activity has not started yet.");
         }
         activity.setEndTime(LocalDateTime.now());
         this.activityRepository.save(activity);
@@ -137,10 +137,10 @@ public class ActivityService implements IActivityService{
     public User addParticipant(Integer id, SerialNumberRequest request) {
         Activity activity = this.getById(id);
         if(activity.getStartTime() == null){
-            throw new ActivityNotStarted("The activity has not started yet.");
+            throw new ActivityNotStartedException("The activity has not started yet.");
         }
         if(activity.getEndTime() != null){
-            throw new ActivityAlreadyEnded("The activity already ended.");
+            throw new ActivityAlreadyEndedException("The activity already ended.");
         }
         User user;
         Card card;
@@ -151,7 +151,7 @@ public class ActivityService implements IActivityService{
             }else{
                 user = card.getUser();
             }
-        }catch (CardNotFound e){
+        }catch (CardNotFoundException e){
             System.out.println("catch block");
             card = this.cardService.createCardWithoutUser(request.getSerialNumber());
             user = new User("Unknown", "", "",null);

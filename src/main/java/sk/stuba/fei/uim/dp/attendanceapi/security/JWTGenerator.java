@@ -4,14 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Role;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
 
-import java.security.Key;
+import java.security.KeyPair;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,7 +16,7 @@ import java.util.stream.Collectors;
 @Component
 public class JWTGenerator {
 
-    private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    private static final KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
 
         public String generateToken(User user){
         String email = user.getEmail();
@@ -34,7 +31,7 @@ public class JWTGenerator {
                 .claim("fullName", user.getFullName())
                 .claim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                 .claim("hasCard", !user.getCards().isEmpty())
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(keyPair.getPrivate(), SignatureAlgorithm.RS256)
                 .compact();
         System.out.println("New token : ");
         System.out.println(token);
@@ -50,13 +47,13 @@ public class JWTGenerator {
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(keyPair.getPrivate(), SignatureAlgorithm.RS256)
                 .compact();
     }
 
     public String getEmailFromJWT(String token){
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(keyPair.getPrivate())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -65,7 +62,7 @@ public class JWTGenerator {
 
     public List<String> getRolesFromJWT(String token){
         Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key)
+                .setSigningKey(keyPair.getPublic())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
@@ -82,9 +79,10 @@ public class JWTGenerator {
     public boolean isTokenValid(String token){
         try{
             Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(keyPair.getPublic())
                     .build()
                     .parseClaimsJws(token);
+            System.out.println("Token is valid");
             return true;
         }catch (Exception ex){
             System.out.println(ex.getMessage());

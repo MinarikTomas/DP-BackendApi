@@ -3,9 +3,9 @@ package sk.stuba.fei.uim.dp.attendanceapi.service;
 import org.springframework.stereotype.Service;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.Card;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.User;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardWithoutUser;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExistsException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFoundException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardWithoutUserException;
 import sk.stuba.fei.uim.dp.attendanceapi.repository.CardRepository;
 import sk.stuba.fei.uim.dp.attendanceapi.request.CardRequest;
 import sk.stuba.fei.uim.dp.attendanceapi.request.NameRequest;
@@ -32,13 +32,13 @@ public class CardService implements ICardService{
                     card.setActive(true);
                     card.setName(request.getName());
                 }else{
-                    throw new CardAlreadyExists("Card with this serial number already exists");
+                    throw new CardAlreadyExistsException("Card with this serial number already exists");
                 }
             }else{
                 card.setUser(user);
                 card.setName(request.getName());
             }
-        }catch(CardNotFound e){
+        }catch(CardNotFoundException e){
             card = new Card(
                     user,
                     request.getName(),
@@ -57,14 +57,14 @@ public class CardService implements ICardService{
         Optional<Card> card = this.cardRepository.findById(id);
         if(card.isPresent()){
             return card.get();
-        }throw new CardNotFound("Card not found");
+        }throw new CardNotFoundException("Card not found");
     }
 
     @Override
     public Card getBySerialNumber(String serialNumber) {
         Card card = this.cardRepository.findBySerialNumber(serialNumber);
         if(card == null){
-            throw new CardNotFound("Card not found.");
+            throw new CardNotFoundException("Card not found.");
         }
         return card;
     }
@@ -80,7 +80,7 @@ public class CardService implements ICardService{
     public void deactivateCard(Integer id) {
         Card card = this.getById(id);
         if(card.getUser() == null){
-            throw new CardWithoutUser("Cannot deactivate card without user.");
+            throw new CardWithoutUserException("Cannot deactivate card without user.");
         }
         card.setActive(false);
         this.cardRepository.save(card);
@@ -88,7 +88,7 @@ public class CardService implements ICardService{
 
     public Card createCardWithoutUser(String serialNumber){
         if(this.serialNumberExists(serialNumber)){
-            throw new CardAlreadyExists("Card with this serial number already exists.");
+            throw new CardAlreadyExistsException("Card with this serial number already exists.");
         }
         Card card = new Card(
                 null,

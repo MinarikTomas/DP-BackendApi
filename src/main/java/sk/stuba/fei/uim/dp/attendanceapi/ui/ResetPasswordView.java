@@ -13,10 +13,10 @@ import sk.stuba.fei.uim.dp.attendanceapi.service.UserService;
 import java.util.List;
 import java.util.Map;
 
-@Route("resetPassword")
+@Route("reset-password")
 @AnonymousAllowed
 public class ResetPasswordView extends VerticalLayout
-        implements HasUrlParameter<String>
+        implements BeforeEnterObserver
 {
     PasswordField password = new PasswordField("New password");
     PasswordField confirmPassword = new PasswordField("Confirm new password");
@@ -79,9 +79,8 @@ public class ResetPasswordView extends VerticalLayout
     }
 
     @Override
-    public void setParameter(BeforeEvent beforeEvent,
-                             @OptionalParameter String parameter) {
-                Location location = beforeEvent.getLocation();
+    public void beforeEnter(BeforeEnterEvent beforeEnterEvent) {
+        Location location = beforeEnterEvent.getLocation();
         QueryParameters queryParameters = location.getQueryParameters();
 
         Map<String, List<String>> parametersMap = queryParameters

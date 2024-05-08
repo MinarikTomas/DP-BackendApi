@@ -6,14 +6,13 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyEnded;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyStarted;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotFound;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStarted;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardWithoutUser;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyEndedException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityAlreadyStartedException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotFoundException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.activity.ActivityNotStartedException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExistsException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFoundException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardWithoutUserException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.GoogleLoginException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
@@ -25,7 +24,7 @@ import java.util.Map;
 @ControllerAdvice
 public class ExceptionController {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
@@ -39,9 +38,9 @@ public class ExceptionController {
     }
 
     @ExceptionHandler({
-            CardNotFound.class,
+            CardNotFoundException.class,
             UserNotFoundException.class,
-            ActivityNotFound.class,
+            ActivityNotFoundException.class,
     })
     public ResponseEntity<String> handleNotFound(RuntimeException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
@@ -56,17 +55,17 @@ public class ExceptionController {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler({
-            ActivityAlreadyEnded.class,
-            ActivityNotStarted.class,
-            ActivityAlreadyStarted.class
+            ActivityAlreadyEndedException.class,
+            ActivityNotStartedException.class,
+            ActivityAlreadyStartedException.class
     })
     public ResponseEntity<String> handleActivityExceptions(RuntimeException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({
-            CardAlreadyExists.class,
-            CardWithoutUser.class
+            CardAlreadyExistsException.class,
+            CardWithoutUserException.class
     })
     public ResponseEntity<String> handleCardExceptions(RuntimeException ex){
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);

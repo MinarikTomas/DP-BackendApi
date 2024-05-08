@@ -24,8 +24,8 @@ import java.util.stream.Stream;
 
 import sk.stuba.fei.uim.dp.attendanceapi.email.EmailSender;
 import sk.stuba.fei.uim.dp.attendanceapi.entity.*;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExists;
-import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFound;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardAlreadyExistsException;
+import sk.stuba.fei.uim.dp.attendanceapi.exception.card.CardNotFoundException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.GoogleLoginException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserAlreadyExistsException;
 import sk.stuba.fei.uim.dp.attendanceapi.exception.user.UserNotFoundException;
@@ -86,7 +86,7 @@ public class UserService implements IUserService{
             throw new UserAlreadyExistsException("User with this email already exists.");
         }
         if(this.cardService.existsWithUser(signupRequest.getCard().getSerialNumber())){
-            throw new CardAlreadyExists("User with this card already exists.");
+            throw new CardAlreadyExistsException("User with this card already exists.");
         }
         User user = new User(
                 signupRequest.getName(),
@@ -101,7 +101,7 @@ public class UserService implements IUserService{
         try{
             Card card = this.cardService.getBySerialNumber(signupRequest.getCard().getSerialNumber());
             this.cardService.addUser(savedUser, card);
-        }catch(CardNotFound e){
+        }catch(CardNotFoundException e){
             this.cardService.createCard(signupRequest.getCard(), savedUser);
         }
     }
