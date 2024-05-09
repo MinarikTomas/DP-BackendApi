@@ -112,11 +112,13 @@ public class UserForm extends FormLayout {
     public void setUser(User user, List<Activity> attendedActivitiesList){
         if(user != null){
             if(user.getId() == null){
+                delete.setVisible(false);
                 id.setVisible(false);
                 password.setVisible(true);
                 gridLayout.setVisible(false);
             }else{
                 id.setVisible(true);
+                delete.setVisible(true);
                 password.setVisible(false);
                 attendedActivitesGrid.setItems(attendedActivitiesList);
                 gridLayout.setVisible(true);

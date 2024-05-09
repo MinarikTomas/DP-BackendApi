@@ -226,6 +226,7 @@ public class ActivityForm extends FormLayout {
 
     private void handleExistingActivity(Activity activity) {
         startTime.setVisible(true);
+        delete.setVisible(true);
         endTime.setVisible(true);
         id.setVisible(true);
         if(activity.getStartTime() != null){
@@ -238,9 +239,11 @@ public class ActivityForm extends FormLayout {
     }
 
     private void handleNewActivity() {
+        delete.setVisible(false);
         id.setVisible(false);
         startTime.setVisible(false);
         endTime.setVisible(false);
+        gridLayout.setVisible(false);
     }
 
     @Getter
