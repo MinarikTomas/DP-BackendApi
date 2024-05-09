@@ -53,8 +53,8 @@ public class SecurityConfig {
                                 mvc.pattern("/api/auth/google"),
                                 mvc.pattern("/api/auth/login"),
                                 mvc.pattern("/api/auth/signup"),
-                                mvc.pattern("/api/user/resetPassword"),
-                                mvc.pattern("/api/")).permitAll();
+                                mvc.pattern("/api/user/resetPassword")
+                        ).permitAll();
                         auth.anyRequest().authenticated();
                     });
             http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -33,8 +33,6 @@ public class JWTGenerator {
                 .claim("hasCard", !user.getCards().isEmpty())
                 .signWith(keyPair.getPrivate(), SignatureAlgorithm.RS256)
                 .compact();
-        System.out.println("New token : ");
-        System.out.println(token);
         return token;
     }
 
@@ -82,7 +80,6 @@ public class JWTGenerator {
                     .setSigningKey(keyPair.getPublic())
                     .build()
                     .parseClaimsJws(token);
-            System.out.println("Token is valid");
             return true;
         }catch (Exception ex){
             System.out.println(ex.getMessage());
